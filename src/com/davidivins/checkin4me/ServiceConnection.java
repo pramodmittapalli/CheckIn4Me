@@ -49,7 +49,7 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
         ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(this);
-		lv.setBackgroundColor(Color.WHITE);
+		lv.setBackgroundColor(Color.WHITE); 
 	}
 	
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long row) 
