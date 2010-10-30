@@ -1,0 +1,134 @@
+<mockup version="1.0" skin="sketch" measuredW="763" measuredH="527" mockupW="282" mockupH="510">
+  <controls>
+    <control controlID="0" controlTypeID="__group__" x="471" y="7" w="-1" h="-1" measuredW="282" measuredH="510" zOrder="0" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::iPhone" x="0" y="0" w="282" h="510" measuredW="282" measuredH="510" zOrder="0" locked="false" isInGroup="24"/>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::PointyButton" x="22" y="434" w="37" h="-1" measuredW="37" measuredH="27" zOrder="1" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <direction>center</direction>
+            <icon>HomeIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="com.balsamiq.mockups::PointyButton" x="69" y="436" w="43" h="-1" measuredW="43" measuredH="27" zOrder="2" locked="false" isInGroup="24">
+          <controlProperties>
+            <text>menu</text>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+          </controlProperties>
+        </control>
+        <control controlID="3" controlTypeID="com.balsamiq.mockups::PointyButton" x="31" y="468" w="62" h="-1" measuredW="37" measuredH="27" zOrder="3" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+            <icon>TelephoneIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="4" controlTypeID="com.balsamiq.mockups::PointyButton" x="174" y="434" w="37" h="-1" measuredW="37" measuredH="27" zOrder="4" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <direction>center</direction>
+            <icon>SearchIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="5" controlTypeID="com.balsamiq.mockups::PointyButton" x="221" y="436" w="37" h="-1" measuredW="37" measuredH="27" zOrder="5" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+            <icon>JumpBackIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="6" controlTypeID="com.balsamiq.mockups::PointyButton" x="183" y="468" w="62" h="-1" measuredW="37" measuredH="27" zOrder="6" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+            <icon>BackSpaceIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::Canvas" x="498" y="106" w="228" h="330" measuredW="100" measuredH="70" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>none</borderStyle>
+        <color>2848996</color>
+      </controlProperties>
+    </control>
+    <control controlID="2" controlTypeID="__group__" x="504" y="121" w="-1" h="-1" measuredW="216" measuredH="61" zOrder="2" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="8" controlTypeID="com.balsamiq.mockups::MultilineButton" x="0" y="0" w="216" h="61" measuredW="33" measuredH="35" zOrder="0" locked="false" isInGroup="25">
+          <controlProperties>
+            <text/>
+          </controlProperties>
+        </control>
+        <control controlID="9" controlTypeID="com.balsamiq.mockups::PointyButton" x="164" y="16" w="37" h="-1" measuredW="37" measuredH="27" zOrder="1" locked="false" isInGroup="25">
+          <controlProperties>
+            <text/>
+            <color>15790322</color>
+            <direction>center</direction>
+            <icon>SearchIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="10" controlTypeID="com.balsamiq.mockups::TextInput" x="43" y="16" w="112" h="-1" measuredW="79" measuredH="29" zOrder="2" locked="false" isInGroup="25">
+          <controlProperties>
+            <text/>
+          </controlProperties>
+        </control>
+        <control controlID="11" controlTypeID="com.balsamiq.mockups::Image" x="11" y="16" w="27" h="27" measuredW="500" measuredH="500" zOrder="3" locked="false" isInGroup="25">
+          <controlProperties>
+            <src>http%3A//farm4.static.flickr.com/3504/3185410319_419a368b35.jpg</src>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::IconLabel" x="519" y="264" w="-1" h="-1" measuredW="52" measuredH="47" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Browser</text>
+        <icon>LinkGlobeIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="4" controlTypeID="com.balsamiq.mockups::IconLabel" x="519" y="326" w="-1" h="-1" measuredW="54" measuredH="47" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>YouTube</text>
+        <icon>ScreenIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="5" controlTypeID="com.balsamiq.mockups::IconLabel" x="587" y="325" w="-1" h="-1" measuredW="66" measuredH="47" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Messaging</text>
+        <icon>FolderIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="6" controlTypeID="com.balsamiq.mockups::IconLabel" x="667" y="327" w="-1" h="-1" measuredW="38" measuredH="47" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Gmail</text>
+        <icon>EmailIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="7" controlTypeID="com.balsamiq.mockups::Canvas" x="572" y="390" w="79" h="46" measuredW="100" measuredH="70" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <borderStyle>none</borderStyle>
+        <color>11776947</color>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Icon" x="604" y="405" w="-1" h="-1" measuredW="16" measuredH="16" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>UpFillTriangleIcon%7Cxsmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="11" controlTypeID="com.balsamiq.mockups::IconLabel" x="504" y="210" w="-1" h="-1" measuredW="78" measuredH="39" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>CheckIn4Me</text>
+        <icon>GeoLocationIcon%7Cxsmall</icon>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

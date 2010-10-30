@@ -1,0 +1,92 @@
+<mockup version="1.0" skin="sketch" measuredW="812" measuredH="547" mockupW="282" mockupH="510">
+  <controls>
+    <control controlID="0" controlTypeID="__group__" x="520" y="27" w="-1" h="-1" measuredW="282" measuredH="510" zOrder="0" locked="false" isInGroup="-1">
+      <groupChildrenDescriptors>
+        <control controlID="0" controlTypeID="com.balsamiq.mockups::iPhone" x="0" y="0" w="282" h="510" measuredW="282" measuredH="510" zOrder="0" locked="false" isInGroup="24"/>
+        <control controlID="1" controlTypeID="com.balsamiq.mockups::PointyButton" x="22" y="434" w="37" h="-1" measuredW="37" measuredH="27" zOrder="1" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <direction>center</direction>
+            <icon>HomeIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="2" controlTypeID="com.balsamiq.mockups::PointyButton" x="69" y="436" w="43" h="-1" measuredW="43" measuredH="27" zOrder="2" locked="false" isInGroup="24">
+          <controlProperties>
+            <text>menu</text>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+          </controlProperties>
+        </control>
+        <control controlID="3" controlTypeID="com.balsamiq.mockups::PointyButton" x="31" y="468" w="62" h="-1" measuredW="37" measuredH="27" zOrder="3" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+            <icon>TelephoneIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="4" controlTypeID="com.balsamiq.mockups::PointyButton" x="174" y="434" w="37" h="-1" measuredW="37" measuredH="27" zOrder="4" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <direction>center</direction>
+            <icon>SearchIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="5" controlTypeID="com.balsamiq.mockups::PointyButton" x="221" y="436" w="37" h="-1" measuredW="37" measuredH="27" zOrder="5" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+            <icon>JumpBackIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+        <control controlID="6" controlTypeID="com.balsamiq.mockups::PointyButton" x="183" y="468" w="62" h="-1" measuredW="37" measuredH="27" zOrder="6" locked="false" isInGroup="24">
+          <controlProperties>
+            <text/>
+            <color>6710886</color>
+            <size>9</size>
+            <direction>center</direction>
+            <icon>BackSpaceIcon%7Cxsmall</icon>
+          </controlProperties>
+        </control>
+      </groupChildrenDescriptors>
+    </control>
+    <control controlID="1" controlTypeID="com.balsamiq.mockups::Canvas" x="548" y="126" w="226" h="34" measuredW="100" measuredH="70" zOrder="1" locked="false" isInGroup="-1"/>
+    <control controlID="2" controlTypeID="com.balsamiq.mockups::TextInput" x="548" y="129" w="197" h="-1" measuredW="195" measuredH="27" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>http%3A//api.gowalla.com/oauth/</text>
+      </controlProperties>
+    </control>
+    <control controlID="3" controlTypeID="com.balsamiq.mockups::Icon" x="745" y="131" w="-1" h="-1" measuredW="24" measuredH="24" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>SpinningIcon%7Csmall</icon>
+      </controlProperties>
+    </control>
+    <control controlID="8" controlTypeID="com.balsamiq.mockups::Button" x="677" y="390" w="-1" h="-1" measuredW="84" measuredH="28" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Authorize%21</text>
+      </controlProperties>
+    </control>
+    <control controlID="9" controlTypeID="com.balsamiq.mockups::Image" x="570" y="187" w="181" h="52" measuredW="228" measuredH="66" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text/>
+        <src>./images/gowalla_logo.png</src>
+      </controlProperties>
+    </control>
+    <control controlID="10" controlTypeID="com.balsamiq.mockups::Label" x="591" y="245" w="-1" h="-1" measuredW="139" measuredH="23" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>OAuth%20Access%20Request</text>
+      </controlProperties>
+    </control>
+    <control controlID="11" controlTypeID="com.balsamiq.mockups::Paragraph" x="561" y="283" w="200" h="81" measuredW="200" measuredH="140" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Do%20you%20authorize%20CheckIn4Me%20to%20access%20your%20data%2C%20check-ins%2C%20location%2C%20x%2C%20y%2C%20z%2C%20aaaa%2C%20bbbb%2C%20cccc%2C%20filler%2C%20filler%2C%20filler%2C%20etc.%20%3F%3F</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>
