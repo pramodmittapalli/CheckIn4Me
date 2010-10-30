@@ -15,7 +15,7 @@ public class Authorization extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.authorization);
 		
-		//Services services = new Services(); 
+		//Services services = new Services();  
 		long service_id = this.getIntent().getLongExtra("service id", 666);
 		Log.e("CheckIn4Me", "service_id=" + service_id);
 		
