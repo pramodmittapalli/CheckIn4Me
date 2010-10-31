@@ -18,6 +18,8 @@ import android.os.Bundle;
 
 public class ServiceConnection extends ListActivity implements OnItemClickListener
 {
+	private static final String TAG = "ServiceConnection";
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -55,14 +57,13 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long row) 
 	{
 		Intent i = new Intent(this, Authorization.class);
-			
-		System.out.println("position=" + position);
-		System.out.println("row=" + row);
-			
-		Log.e("CheckIn4Me", "position=" + position);
-		Log.e("CheckIn4Me", "row=" + row);
-			
-		i.putExtra("service id", position);
+		
+		// log position and row info
+		Log.i(TAG, "position clicked = " + position);
+		Log.i(TAG, "row clicked = " + row);
+		
+		// save position as service id for service connection activity
+		i.putExtra("service_id", position);
 		startActivity(i);
 	}
 }
