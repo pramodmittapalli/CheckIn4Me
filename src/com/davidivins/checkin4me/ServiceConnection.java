@@ -58,10 +58,6 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 	{
 		Intent i = new Intent(this, Authorization.class);
 		
-		// log position and row info
-		Log.i(TAG, "position clicked = " + position);
-		Log.i(TAG, "row clicked = " + row);
-		
 		// save position as service id for service connection activity
 		i.putExtra("service_id", position);
 		startActivity(i);
