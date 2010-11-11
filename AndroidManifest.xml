@@ -3,6 +3,8 @@
 	package="com.davidivins.checkin4me"
 	android:versionCode="1"
 	android:versionName="1.0">
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 	
 		<activity android:name=".ServiceConnection" android:label="@string/app_name">
@@ -44,12 +46,12 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter> -->
-			<intent-filter>
+			<!-- <intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE" />
 				<data android:scheme="checkin4me" android:host="" />
-			</intent-filter>
+			</intent-filter> -->
 		</activity>
 
 		<activity android:name=".CI4M_TEST" android:label="@string/app_name">
