@@ -3,7 +3,7 @@ package com.davidivins.checkin4me;
 import android.net.Uri;
 import android.util.Log;
 
-public class GowallaOAuth implements OAuth
+public class GowallaOAuth extends OAuth
 {
 	private String oauth_access_token;
 	private static final String TAG = "GowallaOAuth";
@@ -24,11 +24,11 @@ public class GowallaOAuth implements OAuth
 			+ "&scope=read-write";
 	}
 	
-	public void processAuthorizationResponseURI(String x, String y)//Uri uri)
+	public void processAuthorizationResponseURI(Uri uri)
 	{
 		//if (uri.getQueryParameter("code") != null)
 		//	authorization_response.put("oauth_token", uri.getQueryParameter("code"));
-		Log.i(TAG, x);//uri.getQueryParameter("code"));
+		//Log.i(TAG, x);//uri.getQueryParameter("code"));
 	}
 	
 	public boolean completeHandshake() { return true; }

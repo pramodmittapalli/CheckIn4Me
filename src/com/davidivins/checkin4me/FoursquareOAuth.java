@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -23,6 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Base64;
@@ -33,7 +35,7 @@ import android.util.Log;
  * 
  * @author david
  */
-public class FoursquareOAuth implements OAuth
+public class FoursquareOAuth extends OAuth
 {
 	private String oauth_request_token;
 	private String oauth_access_token;
@@ -60,11 +62,17 @@ public class FoursquareOAuth implements OAuth
 	private static final String TAG      = "FoursquareOAuth";
 	private static final String ENCODING = "ISO-8859-1";
 	
+	private SharedPreferences settings;
+	private SharedPreferences.Editor settings_editor;
+	
 	/**
 	 * constructor
 	 */
-	FoursquareOAuth()
-	{
+	FoursquareOAuth(SharedPreferences settings)
+	{		
+		this.settings = settings;
+		this.settings_editor = settings.edit();
+		
 		//
 		// move this stuff into a config file
 		//
@@ -100,6 +108,12 @@ public class FoursquareOAuth implements OAuth
 		access_token_response        = new HashMap<String, String>();
 	}
 	
+	protected void finalize() throws Throwable
+	{
+		settings_editor.commit();
+		super.finalize();
+	}
+	
 	/**
 	 * beginHandshake
 	 * 
@@ -107,18 +121,26 @@ public class FoursquareOAuth implements OAuth
 	 */
 	public boolean beginHandshake()
 	{
+		Log.i(TAG, "beginning Foursquare OAuth handshake...");
 		boolean request_success_status = false; // assume request failure
 		
 		// make request token request
 		String base_string = generateRequestTokenBaseString();
+		Log.i(TAG, "base_string = " + base_string);
+
 		String signature   = getSignature(oauth_consumer_secret, base_string);
 		String url_string  = generateRequestTokenURL(signature);
+		
+		//Log.i(TAG, "base string created = " + base_string);
+		//Log.i(TAG, "signature calculated = " + signature);
+		//Log.i(TAG, "request token url = " + url_string);
 		
 		BufferedReader page = null;
 		
 		// make http request
 		try
 		{
+			//Log.i(TAG, "making http request to Foursquare...");
 			// make background http request for temporary token
 			HttpClient httpclient = new DefaultHttpClient();
 	    	HttpGet httpget       = new HttpGet(url_string);
@@ -128,6 +150,8 @@ public class FoursquareOAuth implements OAuth
 	    	page = new BufferedReader(new InputStreamReader(
 	    			response.getEntity().getContent(), "UTF-8"));
 	    	
+	    	//Log.i(TAG, "reading response...");
+	    	
 	    	// read response into a string
 	    	String line;
 	    	String response_str = "";
@@ -136,13 +160,14 @@ public class FoursquareOAuth implements OAuth
 	    		response_str += line;
 	    	}
 	    	
-	    	Log.i(TAG, response_str);
+	    	//Log.i(TAG, "http response = " + response_str);
+	    	
 	    	// break out response query parameters and store in map
 	    	String[] query_parameters = response_str.split("&");
 	    	for (String query_parameter : query_parameters)
 	    	{
 	    		String[] name_value = query_parameter.split("=");
-	    		Log.i(TAG, "" + name_value.length);
+	    		//Log.i(TAG, "" + name_value.length);
 	    		if (name_value.length == 2)
 	    			request_token_response.put(name_value[0], name_value[1]);
 	    	}
@@ -153,6 +178,10 @@ public class FoursquareOAuth implements OAuth
 					request_token_response.containsKey("oauth_callback_confirmed") &&
 					request_token_response.get("oauth_callback_confirmed").equals("true"))
 				request_success_status = true;
+			
+			settings_editor.putString("oauth_token", request_token_response.get("oauth_token"));
+			settings_editor.putString("oauth_token_secret", request_token_response.get("oauth_token_secret"));
+			settings_editor.commit();
 
 		}
 		catch (IOException e)
@@ -161,7 +190,7 @@ public class FoursquareOAuth implements OAuth
 			request_success_status = false;
 		}
 
-		Log.i(TAG, "returning " + request_success_status);
+		//Log.i(TAG, "token request success status = " + request_success_status);
 		return request_success_status;
 	}
 	
@@ -186,15 +215,16 @@ public class FoursquareOAuth implements OAuth
 	 * 
 	 * @param Uri
 	 */
-	public void processAuthorizationResponseURI(String oauth_token, String oauth_verifier)//Uri uri)
+	public void processAuthorizationResponseURI(Uri uri)
 	{
-//		if (uri.getQueryParameter("oauth_token") != null)
-//			authorization_response.put("oauth_token", uri.getQueryParameter("oauth_token"));
-//		if (uri.getQueryParameter("oauth_verifier") != null)
-//			authorization_response.put("oauth_verifier", uri.getQueryParameter("oauth_verifier"));
+		Log.i(TAG, "saved oauth_token = " + settings.getString("oauth_token", "666"));
+		Log.i(TAG, "saved oauth_token_secret = " + settings.getString("oauth_token_secret", "666"));
+
+		authorization_response.put("oauth_token", uri.getQueryParameter("oauth_token"));
+		authorization_response.put("oauth_verifier", uri.getQueryParameter("oauth_verifier"));
 		
-		authorization_response.put("oauth_token", oauth_token);
-		authorization_response.put("oauth_verifier", oauth_verifier);
+		Log.i(TAG, "received oauth_token = " + authorization_response.get("oauth_token"));
+		Log.i(TAG, "received oauth_verifier = " + authorization_response.get("oauth_verifier"));
 	}
 	
 	/**
@@ -209,10 +239,12 @@ public class FoursquareOAuth implements OAuth
 		Log.i(TAG, "completing handshake");
 		// make request token request
 		String base_string = generateAccessTokenBaseString();
+		Log.i(TAG, "base string = " + base_string);
 		String signature   = getSignature(
-				oauth_consumer_secret + request_token_response.get("oauth_token_secret"), 
+				oauth_consumer_secret + settings.getString("oauth_token_secret", "666"),//request_token_response.get("oauth_token_secret"), 
 				base_string);
 		String url_string  = generateAccessTokenURL(signature);
+		Log.i(TAG, "url = " + url_string);
 		
 		BufferedReader page = null;
 		
@@ -240,9 +272,9 @@ public class FoursquareOAuth implements OAuth
 	    	// break out response query parameters and store in map
 	    	String[] query_parameters = response_str.split("&");
 	    	for (String query_parameter : query_parameters)
-	    	{
+	    	{ 
 	    		String[] name_value = query_parameter.split("=");
-	    		Log.i(TAG, "" + name_value.length);
+	    		Log.i(TAG, name_value[0] + " = " + name_value[1]);
 	    		if (name_value.length == 2)
 	    			request_token_response.put(name_value[0], name_value[1]);
 	    	}
@@ -334,12 +366,24 @@ public class FoursquareOAuth implements OAuth
 	 */
 	private String getAccessTokenURIQueryParameters()
 	{
+		String nonce = getNonce();
+		String timestamp = getTimestamp();
+		
+		Log.i(TAG, "oauth_consumer_key = " + oauth_consumer_key);
+		Log.i(TAG, "oauth_nonce = " + nonce);
+		Log.i(TAG, "oauth_signature_method = " + oauth_signature_method);
+		Log.i(TAG, "oauth_timestamp = " + timestamp);
+		Log.i(TAG, "oauth_token = " + authorization_response.get("oauth_token"));
+		Log.i(TAG, "oauth_verifier = " + authorization_response.get("oauth_verifier"));
+		Log.i(TAG, "oauth_version = " + oauth_version);
+
+
 		// uri parameters must be in alphabetical order
 		return "oauth_consumer_key="   + oauth_consumer_key                           +
-			"&oauth_nonce="            + getNonce()                                   +
+			"&oauth_nonce="            + nonce                                   +
 			"&oauth_signature_method=" + oauth_signature_method                       +
+			"&oauth_timestamp="        + timestamp                               +
 			"&oauth_token="            + authorization_response.get("oauth_token")    +
-			"&oauth_timestamp="        + getTimestamp()                               +
 			"&oauth_verifier="         + authorization_response.get("oauth_verifier") +
 			"&oauth_version="          + oauth_version;
 	}

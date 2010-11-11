@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
@@ -23,14 +24,26 @@ public class Authorization extends Activity
 	
 	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle saved_instance_state)
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate(saved_instance_state);
+		SharedPreferences settings = this.getPreferences(MODE_WORLD_WRITEABLE);
+//		if (saved_instance_state !=null)
+//		{
+//		Log.i(TAG, "loading interface");
+//		 oauth_interface = (FoursquareOAuth)saved_instance_state.getSerializable("oauth_interface");
+//		}
+//		else
+//		{
+//			Log.i(TAG, "Creating new bundle.");
+//			//saved_instance_state = new Bundle();
+//		}
+
 		setContentView(R.layout.authorization);
 		
 		// retrieve service id, default to -1 for none/error
 		service_id = getIntent().getIntExtra("service_id", -1);
-		Log.i(TAG, "service_id = " + service_id);
+		//Log.i(TAG, "service_id = " + service_id);
 		
 		//Services services = new Services();  
 		
@@ -41,22 +54,30 @@ public class Authorization extends Activity
 			case 0:
 				try
 				{
-					oauth_interface = new FoursquareOAuth();
-
+					oauth_interface = new FoursquareOAuth(settings);
+					
 					if (oauth_interface.beginHandshake())
 					{
 						i.setData(Uri.parse(oauth_interface.generateAuthorizationURL()));
 					}
 					else
 					{
-						Log.e(TAG, "D'oh. Failed to get Authorize page");
+						Log.e(TAG, "failed to load Authorization intent.");
 					}
 				}
 				catch(Exception e)
 				{
-					Log.e(TAG, e.getMessage());
+					Log.e(TAG, "EXCEPTION: " + e.getMessage());
 				}
 				
+//				if (null == saved_instance_state)
+//					Log.i(TAG, "null1");
+//				if (null == oauth_interface)
+//					Log.i(TAG, "null2");
+				//Log.i(TAG, "saving interface");
+				//saved_instance_state.putSerializable("oauth_interface", oauth_interface);
+				//Log.i(TAG, "saving interface success");
+				//this.onSaveInstanceState(saved_instance_state);
 				break;
 				
 			case 1:
@@ -72,39 +93,69 @@ public class Authorization extends Activity
 				
 			default:
 				Log.e(TAG, "Unrecognized service id = " + service_id);
+				
+				Log.i(TAG, "resumed");
+				Log.i(TAG, "past super's resume");
+				oauth_interface = new FoursquareOAuth(settings);
+				Uri uri = this.getIntent().getData();
+				Log.i(TAG, "got uri");
+				if (null != uri)
+				{
+					Log.i(TAG, "uri is not null");
+					Log.i(TAG, "oauth_token=" + uri.getQueryParameter("oauth_token"));
+					Log.i(TAG, "oauth_verifier=" + uri.getQueryParameter("oauth_verifier"));
+					
+					//String oauth_token = uri.getQueryParameter("oauth_token");
+					//String oauth_verifier = uri.getQueryParameter("oauth_verifier");
+										
+					if (oauth_interface == null)
+						Log.i(TAG, "balls");
+					else
+						Log.i(TAG, "AWESOME");
+					oauth_interface.processAuthorizationResponseURI(uri);//oauth_token, oauth_verifier);
+					Log.i(TAG, "uri processed");
+					if (oauth_interface.completeHandshake())
+					{
+						Log.i(TAG, "got true from completing handshake");
+						i = new Intent(this, NearbyPlaces.class);
+						//startActivity(i);
+					}
+				}
 		}
 		
 		startActivity(i);
+		//this.startActivityForResult(i, 1);
 	}
 
-	@Override
-	protected void onResume()
-	{
-		Log.i(TAG, "resumed");
-		super.onResume();
-		Log.i(TAG, "past super's resume");
-		Uri uri = this.getIntent().getData();
-		Log.i(TAG, "got uri");
-		if (null != uri)
-		{
-			Log.i(TAG, "uri is not null");
-			Log.i(TAG, "oauth_token=" + uri.getQueryParameter("oauth_token"));
-			Log.i(TAG, "oauth_verifier=" + uri.getQueryParameter("oauth_verifier"));
-			
-			String oauth_token = uri.getQueryParameter("oauth_token");
-			String oauth_verifier = uri.getQueryParameter("oauth_verifier");
-			
-			if (oauth_interface == null)
-				Log.i(TAG, "balls");
-			oauth_interface.processAuthorizationResponseURI(oauth_token, oauth_verifier);
-			Log.i(TAG, "uri processed");
-			if (oauth_interface.completeHandshake())
-			{
-				Log.i(TAG, "got true from completing handshake");
-				Intent i = new Intent(this, NearbyPlaces.class);
-				startActivity(i);
-			}
-		}
+//	@Override
+//	protected void onResume()
+//	{
+		
+//		Log.i(TAG, "resumed");
+//		super.onResume();
+//		Log.i(TAG, "past super's resume");
+//		Uri uri = this.getIntent().getData();
+//		Log.i(TAG, "got uri");
+//		if (null != uri)
+//		{
+//			Log.i(TAG, "uri is not null");
+//			Log.i(TAG, "oauth_token=" + uri.getQueryParameter("oauth_token"));
+//			Log.i(TAG, "oauth_verifier=" + uri.getQueryParameter("oauth_verifier"));
+//			
+//			String oauth_token = uri.getQueryParameter("oauth_token");
+//			String oauth_verifier = uri.getQueryParameter("oauth_verifier");
+//			
+//			if (oauth_interface == null)
+//				Log.i(TAG, "balls");
+//			oauth_interface.processAuthorizationResponseURI(oauth_token, oauth_verifier);
+//			Log.i(TAG, "uri processed");
+//			if (oauth_interface.completeHandshake())
+//			{
+//				Log.i(TAG, "got true from completing handshake");
+//				Intent i = new Intent(this, NearbyPlaces.class);
+//				startActivity(i);
+//			}
+//		}
 //		Uri uri = this.getIntent().getData();
 //		if (null != uri)
 //		{
@@ -115,7 +166,21 @@ public class Authorization extends Activity
 //			startActivity(i);
 //			
 //		}
-	}
+//	}
+	
+//	@Override
+//	public void onSaveInstanceState(Bundle saved_instance_state) {
+//		Log.i(TAG, "Saving state");
+//	  saved_instance_state.putSerializable("oauth_interface", oauth_interface);
+//	  super.onSaveInstanceState(saved_instance_state);
+//	}
+//	
+//	@Override
+//	public void onRestoreInstanceState(Bundle savedInstanceState) {
+//	  super.onRestoreInstanceState(savedInstanceState);
+//	  Log.i(TAG, "Restoring state...");
+//	  oauth_interface = (FoursquareOAuth)savedInstanceState.getSerializable("oauth_interface");
+//	}
 }
 
 //HashMap<String, String> parameters = new HashMap<String, String>();
