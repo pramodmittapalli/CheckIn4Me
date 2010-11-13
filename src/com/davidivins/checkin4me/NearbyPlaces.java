@@ -1,14 +1,16 @@
 package com.davidivins.checkin4me;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
 public class NearbyPlaces extends Activity
 {
 	private static final String TAG = "NearbyPlaces";
-	private static final String oauth_token = "LU0OG2KGC0DH3G4QOIJ3L2H0NMEB1S4PCCM44TNWHHJTFMGM";
-	private static final String oauth_token_secret = "PY0OB1KB2CCFHMYDLZNZE2DILZUQSAQVGQSDZKOQOPZ1RX1D";
+	
+//	private static final String oauth_token = "LU0OG2KGC0DH3G4QOIJ3L2H0NMEB1S4PCCM44TNWHHJTFMGM";
+//	private static final String oauth_token_secret = "PY0OB1KB2CCFHMYDLZNZE2DILZUQSAQVGQSDZKOQOPZ1RX1D";
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -17,8 +19,8 @@ public class NearbyPlaces extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.nearbyplaces);
 		
-		Log.i(TAG, "requesting...");
-		
+		SharedPreferences p = this.getPreferences(MODE_WORLD_WRITEABLE);
+		Log.i(TAG, "test! = " + p.getString("oauth_token", "-1")); // shared preferences not shared across activities :(
 	}
 }
 		

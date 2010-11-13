@@ -1,15 +1,8 @@
 package com.davidivins.checkin4me;
 
-import java.io.Serializable;
-
-import android.net.Uri;
-
-abstract class OAuth implements Serializable
+abstract class OAuth
 {
-	abstract boolean beginHandshake();
-	abstract String generateAuthorizationURL();
-	abstract void processAuthorizationResponseURI(Uri uri);
-	abstract boolean completeHandshake();
-	abstract boolean hasAccessToken();
-	abstract String getAccessToken();
+	abstract Response beginHandshake();
+	abstract String generateAuthorizationURL(String oauth_token);
+	abstract Response completeHandshake(String oauth_token_secret, String oauth_token, String oauth_verifier);
 }

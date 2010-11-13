@@ -1,0 +1,14 @@
+Foursquare
+Application Name: CheckIn4Me
+Callback URL: checkin4me:///
+Key: 1AOTUF0OB4UQQWVS1DFDQWD3LKEBPWOCQPRDP4NYATJCUEAW
+Secret: ID1ALZP5XUA4YMJ3GSB3Q3GC2NZZFT0VPVYN5JMEBBG0QMEK
+obtained oauth key:
+
+Gowalla
+API key	12f4a2ac2b4a4afb9aa87b7ee4a16f0a
+Secret key	abd5672efe21467b81dabc78f1f1f849
+Application website	http://checkin4.me
+Support website	http://checkin4.me
+OAuth callback URL	checkin4me:///
+obtained oauth key:
