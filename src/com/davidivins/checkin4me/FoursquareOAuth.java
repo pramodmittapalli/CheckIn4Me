@@ -15,21 +15,7 @@ import android.util.Log;
  * @author David Ivins
  */
 public class FoursquareOAuth extends OAuth
-{	
-//	private String oauth_consumer_key;
-//	private String oauth_consumer_secret;
-//	
-//	private String oauth_callback;
-//	private String oauth_http_method;
-//	private String oauth_host;
-//	
-//	private String oauth_signature_method;
-//	private String oauth_version;
-//	
-//	private String oauth_request_token_endpoint;
-//	private String oauth_authorize_endpoint;
-//	private String oauth_access_token_endpoint;
-		
+{		
 	private static final String TAG      = "FoursquareOAuth";
 	private static final String ENCODING = "ISO-8859-1";
 	
