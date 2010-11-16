@@ -8,6 +8,7 @@ import java.util.Map;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -25,28 +26,30 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 	{
 		super.onCreate(savedInstanceState);
 		
+		// initialize services and get list
+		ArrayList<Service> services_list = 
+			Services.getInstance(this).getServicesAsArrayList();
+
 		// define the list which holds the information of the list
-		List<Map<String, Object>> resourceNames =
+		List<Map<String, Object>> resource_names =
 			new ArrayList<Map<String, Object>>();
 
 		// define the map which will hold the information for each row
 		Map<String, Object> data;
-		
-		Services services = new Services();
-		ArrayList<Service> services_list = services.getServicesAsList();
-		
+
 		for (Service service : services_list)
 		{
 			data = new HashMap<String, Object>();
-			data.put(service.getKey(), service.getDrawable()); 
-			resourceNames.add(data);
+			data.put(service.getLogo().getKey(), service.getLogo().getDrawable()); 
+			resource_names.add(data);
 		}
-        
-		SimpleAdapter service_images = new SimpleAdapter(this, resourceNames,
-			R.layout.serviceconnection, services.getKeys(), services.getIds());
-		
+
+		SimpleAdapter service_images = new SimpleAdapter(this, resource_names,
+			R.layout.serviceconnection, Services.getInstance(this).getLogoKeys(), 
+			Services.getInstance(this).getLogoIds());
+
         setListAdapter(service_images);
-        
+
         ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(this);
@@ -58,6 +61,7 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		Intent i = new Intent(this, Authorization.class);
 		
 		// save position as service id for service connection activity
+		Log.i(TAG, "clicked service id = " + position);
 		i.putExtra("service_id", position);
 		startActivity(i);
 	}

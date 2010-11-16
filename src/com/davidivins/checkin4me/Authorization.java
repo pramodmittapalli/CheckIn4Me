@@ -15,7 +15,7 @@ public class Authorization extends Activity
 {	
 	private static final String TAG = "Authorization";
 	private int service_id;
-	private OAuth oauth_interface;
+	private OAuthConnector oauth_interface;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -43,7 +43,7 @@ public class Authorization extends Activity
 			case 0:
 				try
 				{
-					oauth_interface = new FoursquareOAuth(this.getResources());//settings);
+					oauth_interface = new FoursquareOAuthConnector(this.getResources());//settings);
 					
 					OAuthResponse response = (OAuthResponse)oauth_interface.beginHandshake();
 					TreeMap<String, String> parameters = response.getQueryParameters();
@@ -93,7 +93,7 @@ public class Authorization extends Activity
 				if (settings.getBoolean("handshake_in_progress", false) && 
 						settings.getInt("handshake_service_id", -1) == 0)
 				{
-					oauth_interface = new FoursquareOAuth(this.getResources());
+					oauth_interface = new FoursquareOAuthConnector(this.getResources());
 					Uri uri = this.getIntent().getData();
 					
 					if (null != uri)

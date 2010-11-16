@@ -1,6 +1,6 @@
 package com.davidivins.checkin4me;
 
-abstract class OAuth
+abstract class OAuthConnector
 {
 	abstract Response beginHandshake();
 	abstract String generateAuthorizationURL(String oauth_token);

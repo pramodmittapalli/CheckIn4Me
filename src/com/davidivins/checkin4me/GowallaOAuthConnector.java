@@ -6,12 +6,12 @@ import java.util.Properties;
 import android.content.res.Resources;
 import android.util.Log;
 
-public class GowallaOAuth extends OAuth
+public class GowallaOAuthConnector extends OAuthConnector
 {
 	private static final String TAG = "GowallaOAuth";
 	private Properties config;
 	
-	GowallaOAuth(Resources resources) 
+	GowallaOAuthConnector(Resources resources) 
 	{
 		try 
 		{

@@ -1,12 +1,10 @@
 package com.davidivins.checkin4me;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Properties;
 
 import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.util.Log;
 
 /**
@@ -14,7 +12,7 @@ import android.util.Log;
  * 
  * @author David Ivins
  */
-public class FoursquareOAuth extends OAuth
+public class FoursquareOAuthConnector extends OAuthConnector
 {		
 	private static final String TAG      = "FoursquareOAuth";
 	private static final String ENCODING = "ISO-8859-1";
@@ -25,7 +23,7 @@ public class FoursquareOAuth extends OAuth
 	/**
 	 * constructor
 	 */
-	FoursquareOAuth(Resources resources)
+	FoursquareOAuthConnector(Resources resources)
 	{
 		try 
 		{
