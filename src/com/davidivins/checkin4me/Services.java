@@ -26,6 +26,11 @@ public class Services
 		return instance;
 	}
 	
+	public Service getServiceById(int id)
+	{
+		return services.get(id);
+	}
+	
 	public ArrayList<Service> getServicesAsArrayList()
 	{
 		return services;

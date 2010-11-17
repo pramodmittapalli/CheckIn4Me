@@ -11,6 +11,7 @@ public class GowallaService implements Service
 	private static final String TAG = "GowallaService";
 	private Properties config;
 	private DrawableListItem logo;
+	private OAuthConnector oauth_connector;
 	
 	public GowallaService(Resources resources)
 	{
@@ -21,6 +22,8 @@ public class GowallaService implements Service
 		{
 			InputStream config_file = resources.openRawResource(R.raw.gowalla);
 			config.load(config_file);
+			
+			oauth_connector = new GowallaOAuthConnector(config);
 		} 
 		catch (Exception e) 
 		{
@@ -30,8 +33,7 @@ public class GowallaService implements Service
 
 	public String getName() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "Gowalla";
 	}
 	
 	public DrawableListItem getLogo()
@@ -41,11 +43,11 @@ public class GowallaService implements Service
 
 	public OAuthConnector getOAuthConnector() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return oauth_connector;
 	}
 
-	public Request getNewOAuthRequest() {
+	public Request getNewOAuthRequest() 
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}

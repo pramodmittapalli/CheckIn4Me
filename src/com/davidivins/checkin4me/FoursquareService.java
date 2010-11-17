@@ -9,8 +9,10 @@ import android.util.Log;
 public class FoursquareService implements Service
 {
 	private static final String TAG = "FoursquareService";
+	
 	private Properties config;
 	private DrawableListItem logo;
+	private OAuthConnector oauth_connector;
 	
 	public FoursquareService(Resources resources)
 	{
@@ -21,17 +23,20 @@ public class FoursquareService implements Service
 		{
 			InputStream config_file = resources.openRawResource(R.raw.foursquare);
 			config.load(config_file);
+			
+			// create oauth connector with current configuration
+			oauth_connector =  new FoursquareOAuthConnector(config);
 		} 
 		catch (Exception e) 
 		{
 			Log.e(TAG, "Failed to open config file");
 		}
+		
 	}
 
 	public String getName() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "Foursquare";
 	}
 	
 	public DrawableListItem getLogo()
@@ -41,8 +46,7 @@ public class FoursquareService implements Service
 
 	public OAuthConnector getOAuthConnector() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return oauth_connector;
 	}
 
 	public Request getNewOAuthRequest() {

@@ -1,10 +1,12 @@
 package com.davidivins.checkin4me;
 
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Properties;
+import java.util.TreeMap;
 
-import android.content.res.Resources;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.util.Log;
 
 /**
@@ -12,9 +14,9 @@ import android.util.Log;
  * 
  * @author David Ivins
  */
-public class FoursquareOAuthConnector extends OAuthConnector
+public class FoursquareOAuthConnector implements OAuthConnector
 {		
-	private static final String TAG      = "FoursquareOAuth";
+	private static final String TAG      = "FoursquareOAuthConnector";
 	private static final String ENCODING = "ISO-8859-1";
 	
 	private Properties config;
@@ -23,18 +25,9 @@ public class FoursquareOAuthConnector extends OAuthConnector
 	/**
 	 * constructor
 	 */
-	FoursquareOAuthConnector(Resources resources)
+	FoursquareOAuthConnector(Properties config)
 	{
-		try 
-		{
-			InputStream config_file = resources.openRawResource(R.raw.foursquare);
-			config = new Properties();
-			config.load(config_file);
-		} 
-		catch (Exception e) 
-		{
-			Log.e(TAG, "Failed to open config file");
-		}
+		this.config = config;
 		
 		try
 		{
@@ -52,7 +45,7 @@ public class FoursquareOAuthConnector extends OAuthConnector
 	 * 
 	 * @return boolean
 	 */
-	public Response beginHandshake()
+	public OAuthResponse beginHandshake()
 	{
 		FoursquareOAuthRequest request = new FoursquareOAuthRequest(
 				config.getProperty("oauth_consumer_secret") + "&",
@@ -73,25 +66,92 @@ public class FoursquareOAuthConnector extends OAuthConnector
 	}
 	
 	/**
+	 * isSuccessfulInitialResponse
+	 * 
+	 * @param OAuthResponse
+	 * @return boolean
+	 */
+	public boolean isSuccessfulInitialResponse(OAuthResponse response)
+	{
+		boolean is_successful = false;
+		TreeMap<String, String> parameters = response.getQueryParameters();
+		
+		if (response.getSuccessStatus() && parameters.containsKey("oauth_token_secret") &&
+				parameters.containsKey("oauth_token") && 
+				parameters.containsKey("oauth_callback_confirmed") &&
+				parameters.get("oauth_callback_confirmed").equals("true"))
+			is_successful = true;
+		
+		return is_successful;
+	}
+	
+	/**
+	 * storeNecessaryInitialResponseData
+	 * 
+	 * @param Editor
+	 * @param OAuthResponse
+	 */
+	public void storeNecessaryInitialResponseData(Editor settings_editor, OAuthResponse response)
+	{
+		TreeMap<String, String> parameters = response.getQueryParameters();
+		settings_editor.putString("oauth_token_secret", parameters.get("oauth_token_secret"));
+		settings_editor.putString("oauth_token", parameters.get("oauth_token"));
+		settings_editor.commit();
+	}
+	
+	/**
 	 * getAuthorizationURL
 	 * 
 	 * @return String
 	 */
-	public String generateAuthorizationURL(String oauth_token)
+	public String generateAuthorizationURL(SharedPreferences settings)//String oauth_token)
 	{
 		return config.getProperty("oauth_host") + 
 			config.getProperty("oauth_authorize_endpoint") + "?" + 
-			"oauth_token=" + oauth_token;
+			"oauth_token=" + settings.getString("oauth_token", "-1");//oauth_token;
 	}
+	
+	/**
+	 * isSuccessfulAuthorizationResponse
+	 * 
+	 * @param Uri
+	 * @return boolean
+	 */
+	public boolean isSuccessfulAuthorizationResponse(Uri response)
+	{
+		boolean is_successful = false;
+		
+		if ((null != response) && 
+				(response.getQueryParameter("oauth_token") != null) &&
+				(response.getQueryParameter("oauth_verifier") != null))
+			is_successful = true;
+		
+		Log.i(TAG, "oauth_token=" + response.getQueryParameter("oauth_token"));
+		Log.i(TAG, "oauth_verifier=" + response.getQueryParameter("oauth_verifier"));
+		
+		return is_successful;
+	}
+	
+	/**
+	 * storeNecessaryAuthorizationResponseData
+	 * 
+	 * @param settings_editor
+	 * @param response
+	 */
+	public void storeNecessaryAuthorizationResponseData(Editor settings_editor, Uri response) { }
 	
 	/**
 	 * completeHandshake
 	 * 
 	 * @return boolean
 	 */
-	public Response completeHandshake(String oauth_token_secret, String oauth_token, String oauth_verifier)
+	public OAuthResponse completeHandshake(SharedPreferences settings, Uri previous_response)
 	{
 		OAuthResponse response = new OAuthResponse();
+		
+		String oauth_token_secret = settings.getString("oauth_token_secret", null); 
+		String oauth_token = previous_response.getQueryParameter("oauth_token");
+		String oauth_verifier = previous_response.getQueryParameter("oauth_verifier");
 		
 		if (oauth_token_secret != null && oauth_token != null && oauth_verifier != null)
 		{
@@ -114,5 +174,37 @@ public class FoursquareOAuthConnector extends OAuthConnector
 		Log.i(TAG, "response.success_status = " + response.getSuccessStatus());
 		Log.i(TAG, "response.response_string = " + response.getResponseString());
 		return response;
+	}
+	
+	/**
+	 * isSuccessfulCompletionResponse
+	 * 
+	 * @param OAuthResponse
+	 * @return boolean
+	 */
+	public boolean isSuccessfulCompletionResponse(OAuthResponse response)
+	{
+		boolean is_successful = false;
+		TreeMap<String, String> parameters = response.getQueryParameters();
+
+		if (response.getSuccessStatus() && parameters.containsKey("oauth_token_secret") &&
+				parameters.containsKey("oauth_token"))
+			is_successful = true;
+		
+		return is_successful;
+	}
+	
+	/**
+	 * storeNecessaryCompletionResponseData
+	 * 
+	 * @param settings_editor
+	 * @param response
+	 */
+	public void storeNecessaryCompletionResponseData(Editor settings_editor, OAuthResponse response)
+	{
+		TreeMap<String, String> parameters = response.getQueryParameters();
+		settings_editor.putString("oauth_token_secret", parameters.get("oauth_token_secret"));
+		settings_editor.putString("oauth_token", parameters.get("oauth_token"));
+		settings_editor.commit();
 	}
 }

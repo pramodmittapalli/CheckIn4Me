@@ -73,7 +73,7 @@ public class FoursquareOAuthRequest extends Request
 
 		Log.i(TAG, "executing Foursquare OAuth request...");
 		
-		// make request token request
+		// make request
 		String base_string = generateBaseString();
 		String signature   = calculateSignature(signing_key, base_string);
 		String url_string  = generateURL(signature);

@@ -1,8 +1,18 @@
 package com.davidivins.checkin4me;
 
-abstract class OAuthConnector
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
+
+abstract interface OAuthConnector
 {
-	abstract Response beginHandshake();
-	abstract String generateAuthorizationURL(String oauth_token);
-	abstract Response completeHandshake(String oauth_token_secret, String oauth_token, String oauth_verifier);
+	abstract OAuthResponse beginHandshake();
+	abstract boolean isSuccessfulInitialResponse(OAuthResponse response);
+	abstract void storeNecessaryInitialResponseData(Editor settings_editor, OAuthResponse response);
+	abstract String generateAuthorizationURL(SharedPreferences settings);
+	abstract boolean isSuccessfulAuthorizationResponse(Uri response);
+	abstract void storeNecessaryAuthorizationResponseData(Editor settings_editor, Uri response);
+	abstract OAuthResponse completeHandshake(SharedPreferences settings, Uri previous_response);
+	abstract boolean isSuccessfulCompletionResponse(OAuthResponse response);
+	abstract void storeNecessaryCompletionResponseData(Editor settings_editor, OAuthResponse response);
 }
