@@ -3,6 +3,7 @@ package com.davidivins.checkin4me;
 import java.io.InputStream;
 import java.util.Properties;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -48,5 +49,10 @@ public class BrightkiteService implements Service
 	public Request getNewOAuthRequest() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public boolean connected(SharedPreferences settings)
+	{
+		return false;
 	}
 }

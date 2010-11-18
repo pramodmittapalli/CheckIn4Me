@@ -3,6 +3,7 @@ package com.davidivins.checkin4me;
 import java.io.InputStream;
 import java.util.Properties;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -50,5 +51,11 @@ public class GowallaService implements Service
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public boolean connected(SharedPreferences settings)
+	{
+		return settings.contains("gowalla_access_token") && 
+			(settings.getString("gowalla_access_token", null) != null);
 	}
 }

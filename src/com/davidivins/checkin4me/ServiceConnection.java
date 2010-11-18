@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 public class ServiceConnection extends ListActivity implements OnItemClickListener
 {
@@ -29,6 +30,15 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		// initialize services and get list
 		ArrayList<Service> services_list = 
 			Services.getInstance(this).getServicesAsArrayList();
+		
+		for (Service service : services_list)
+		{
+			if (service.connected(PreferenceManager.getDefaultSharedPreferences(this)))
+			{
+				Intent i = new Intent(this, NearbyPlaces.class);
+				startActivity(i);
+			}
+		}
 
 		// define the list which holds the information of the list
 		List<Map<String, Object>> resource_names =
