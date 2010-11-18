@@ -94,8 +94,8 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	public void storeNecessaryInitialResponseData(Editor settings_editor, OAuthResponse response)
 	{
 		TreeMap<String, String> parameters = response.getQueryParameters();
-		settings_editor.putString("oauth_token_secret", parameters.get("oauth_token_secret"));
-		settings_editor.putString("oauth_token", parameters.get("oauth_token"));
+		settings_editor.putString("foursquare_oauth_token_secret", parameters.get("oauth_token_secret"));
+		settings_editor.putString("foursquare_oauth_token", parameters.get("oauth_token"));
 		settings_editor.commit();
 	}
 	
@@ -108,7 +108,7 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	{
 		return config.getProperty("oauth_host") + 
 			config.getProperty("oauth_authorize_endpoint") + "?" + 
-			"oauth_token=" + settings.getString("oauth_token", "-1");//oauth_token;
+			"oauth_token=" + settings.getString("foursquare_oauth_token", "-1");//oauth_token;
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	{
 		OAuthResponse response = new OAuthResponse();
 		
-		String oauth_token_secret = settings.getString("oauth_token_secret", null); 
+		String oauth_token_secret = settings.getString("foursquare_oauth_token_secret", null); 
 		String oauth_token = previous_response.getQueryParameter("oauth_token");
 		String oauth_verifier = previous_response.getQueryParameter("oauth_verifier");
 		
@@ -203,8 +203,11 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	public void storeNecessaryCompletionResponseData(Editor settings_editor, OAuthResponse response)
 	{
 		TreeMap<String, String> parameters = response.getQueryParameters();
-		settings_editor.putString("oauth_token_secret", parameters.get("oauth_token_secret"));
-		settings_editor.putString("oauth_token", parameters.get("oauth_token"));
+		settings_editor.putString("foursquare_oauth_token_secret", parameters.get("oauth_token_secret"));
+		settings_editor.putString("foursquare_oauth_token", parameters.get("oauth_token"));
 		settings_editor.commit();
+		
+		Log.i(TAG, "oauth_token_secret = " + parameters.get("oauth_token_secret"));
+		Log.i(TAG, "oauth_token = " + parameters.get("oauth_token"));
 	}
 }
