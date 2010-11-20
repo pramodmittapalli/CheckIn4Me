@@ -1,9 +1,12 @@
 package com.davidivins.checkin4me;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,8 +15,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * NearbyPlaces
+ * 
+ * @author david
+ */
 public class NearbyPlaces extends Activity implements LocationListener
 {
 	private static final String TAG = "NearbyPlaces";
@@ -27,16 +43,45 @@ public class NearbyPlaces extends Activity implements LocationListener
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.nearby_places);
-		
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
+
+		ScrollView sv = new ScrollView(this);
+		LinearLayout place = new LinearLayout(this);
+		LinearLayout text_line = new LinearLayout(this);
+		LinearLayout icon_line = new LinearLayout(this);
+		place.setOrientation(LinearLayout.VERTICAL);
+		text_line.setOrientation(LinearLayout.HORIZONTAL);
+		icon_line.setOrientation(LinearLayout.HORIZONTAL);
+		place.addView(text_line);
+		place.addView(icon_line);
+		sv.addView(place);
 		
-		SharedPreferences p = this.getPreferences(MODE_WORLD_WRITEABLE);
-		Log.i(TAG, "test! = " + p.getString("oauth_token", "-1")); // shared preferences not shared across activities :(
+		TextView tv = new TextView(this);
+		tv.setText("Some Place!!");
+		text_line.addView(tv);
+		
+		ImageView fs = new ImageView(this);
+        fs.setImageResource(R.drawable.foursquare20x20);        
+        icon_line.addView(fs);
+        
+		ImageView g = new ImageView(this);
+        g.setImageResource(R.drawable.gowalla20x20);
+        icon_line.addView(g);
+        
+		ImageView bk = new ImageView(this);
+        bk.setImageResource(R.drawable.brightkite20x20);
+        icon_line.addView(bk);
+        
+		setContentView(sv);		
+		//setContentView(R.layout.nearby_places);
+		
+		
+//		SharedPreferences p = this.getPreferences(MODE_WORLD_WRITEABLE);
+//		Log.i(TAG, "test! = " + p.getString("oauth_token", "-1")); // shared preferences not shared across activities :(
 	}
 
 	/**
