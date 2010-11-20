@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearView
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:padding="10dp"
-  android:textSize="16sp"
-  android:text="Nearby Places">
-</LinearView>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+ 	android:layout_height="fill_parent">
+
+	<ListView android:id="@+id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
+	<TextView
+		android:id="@+id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="There are not any places nearby!" />
+</LinearLayout>

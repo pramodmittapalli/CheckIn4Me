@@ -1,27 +1,37 @@
 package com.davidivins.checkin4me;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +40,7 @@ import android.widget.Toast;
  * 
  * @author david
  */
-public class NearbyPlaces extends Activity implements LocationListener
+public class NearbyPlaces extends ListActivity implements LocationListener
 {
 	private static final String TAG = "NearbyPlaces";
 
@@ -49,16 +59,106 @@ public class NearbyPlaces extends Activity implements LocationListener
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
 
-		ScrollView sv = new ScrollView(this);
-		LinearLayout place = new LinearLayout(this);
+//		ScrollView sv = new ScrollView(this);
+//		LinearLayout lv = new LinearLayout(this);
+//		lv.setOrientation(LinearLayout.VERTICAL);
+//		
+//		for (int i = 0; i < 20; i++)
+//		{
+//			lv.addView(getRow());
+//		}
+//		sv.addView(lv);
+//		
+//		setContentView(sv);
+
+		class LinearLayoutAdapter extends ArrayAdapter<LinearLayout>
+		{
+			private ArrayList<LinearLayout> items;
+
+			public LinearLayoutAdapter(Context context, int textViewResourceId, ArrayList<LinearLayout> items) 
+			{
+				super(context, textViewResourceId, items);
+				this.items = items;
+	        }
+
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent) 
+			{
+				View v = convertView;
+				if (v == null) 
+				{
+					LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					v = vi.inflate(R.layout.nearby_place_row, null);
+				}
+				
+				LinearLayout row = items.get(position);
+				if (row != null) 
+				{
+					LinearLayout lv = (LinearLayout)v.findViewById(R.id.nearby_place);
+					lv.setOrientation(LinearLayout.VERTICAL);
+					
+					LinearLayout text_line = new LinearLayout(parent.getContext());
+					LinearLayout icon_line = new LinearLayout(parent.getContext());
+					text_line.setPadding(5, 5, 5, 5);
+					icon_line.setPadding(5, 5, 5, 5);
+
+					
+					TextView tv = new TextView(parent.getContext());
+					tv.setText("Some Place!!");
+					tv.setTextColor(Color.BLACK);
+					text_line.addView(tv);
+					
+					ImageView fs = new ImageView(parent.getContext());
+			        fs.setImageResource(R.drawable.foursquare20x20);      
+					fs.setPadding(0, 0, 5, 0);
+					icon_line.addView(fs);
+			        
+					ImageView g = new ImageView(parent.getContext());
+			        g.setImageResource(R.drawable.gowalla20x20);
+					g.setPadding(0, 0, 5, 0);
+					icon_line.addView(g);
+
+					ImageView bk = new ImageView(parent.getContext());
+			        bk.setImageResource(R.drawable.brightkite20x20);
+					bk.setPadding(0, 0, 5, 0);
+					icon_line.addView(bk);
+
+					lv.addView(text_line);
+					lv.addView(icon_line);
+				}
+				
+				return v;
+	        }
+		}
+		
+		setContentView(R.layout.nearby_places);
+		ArrayList<LinearLayout> rows = new ArrayList<LinearLayout>();
+		
+		for (int i = 0; i < 20; i++)
+		{
+		rows.add(getRow());
+		}
+		LinearLayoutAdapter adapter = new LinearLayoutAdapter(this, R.layout.nearby_place_row, rows);
+		setListAdapter(adapter);
+		
+		getListView().setTextFilterEnabled(true);
+		getListView().setBackgroundColor(Color.WHITE); 
+		
+	}
+	
+	LinearLayout getRow()
+	{
+		LinearLayout row = new LinearLayout(this);
+		row.setOrientation(LinearLayout.VERTICAL);
+
 		LinearLayout text_line = new LinearLayout(this);
 		LinearLayout icon_line = new LinearLayout(this);
-		place.setOrientation(LinearLayout.VERTICAL);
+		
 		text_line.setOrientation(LinearLayout.HORIZONTAL);
 		icon_line.setOrientation(LinearLayout.HORIZONTAL);
-		place.addView(text_line);
-		place.addView(icon_line);
-		sv.addView(place);
+		
+		row.addView(text_line);
+		row.addView(icon_line);
 		
 		TextView tv = new TextView(this);
 		tv.setText("Some Place!!");
@@ -74,14 +174,9 @@ public class NearbyPlaces extends Activity implements LocationListener
         
 		ImageView bk = new ImageView(this);
         bk.setImageResource(R.drawable.brightkite20x20);
-        icon_line.addView(bk);
+        icon_line.addView(bk); 
         
-		setContentView(sv);		
-		//setContentView(R.layout.nearby_places);
-		
-		
-//		SharedPreferences p = this.getPreferences(MODE_WORLD_WRITEABLE);
-//		Log.i(TAG, "test! = " + p.getString("oauth_token", "-1")); // shared preferences not shared across activities :(
+        return row;
 	}
 
 	/**
