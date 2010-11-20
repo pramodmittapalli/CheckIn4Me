@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, CheckIn4Me!</string>
     <string name="app_name">CheckIn4Me</string>
+    
+    <string name="menu_option_connect">Connect More Services</string>
+	<string name="menu_option_nearby">Nearby Places</string>
+    
 </resources>

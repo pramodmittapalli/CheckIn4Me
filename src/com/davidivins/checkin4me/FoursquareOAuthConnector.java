@@ -23,7 +23,9 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	private String oauth_callback;
 	
 	/**
-	 * constructor
+	 * FoursquareOAuthConnector
+	 * 
+	 * @param Properties config
 	 */
 	FoursquareOAuthConnector(Properties config)
 	{

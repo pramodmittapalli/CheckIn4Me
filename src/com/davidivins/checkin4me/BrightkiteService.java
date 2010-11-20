@@ -7,6 +7,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 
+/**
+ * BrightkiteService
+ * 
+ * @author david
+ */
 public class BrightkiteService implements Service
 {
 	private static final String TAG = "BrightkiteService";
@@ -31,8 +36,7 @@ public class BrightkiteService implements Service
 
 	public String getName() 
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "Brightkite";
 	}
 	
 	public DrawableListItem getLogo()

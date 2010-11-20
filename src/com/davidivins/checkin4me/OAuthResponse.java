@@ -2,18 +2,37 @@ package com.davidivins.checkin4me;
 
 import java.util.TreeMap;
 
+/**
+ * OAuthResponse
+ * 
+ * @author david
+ */
 public class OAuthResponse extends Response
 {
+	/**
+	 * OAuthResponse
+	 */
 	public OAuthResponse()
 	{
 		super();
 	}
 	
+	/**
+	 * OAuthResponse
+	 * 
+	 * @param success_status
+	 * @param response_string
+	 */
 	public OAuthResponse(boolean success_status, String response_string)
 	{
 		super(success_status, response_string);
 	}
 	
+	/**
+	 * getQueryParameters
+	 * 
+	 * @return TreeMap<String, String>
+	 */
 	public TreeMap<String, String> getQueryParameters()
 	{
 		TreeMap<String, String> query_parameters = new TreeMap<String, String>();

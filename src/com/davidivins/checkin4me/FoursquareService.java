@@ -7,6 +7,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 
+/**
+ * FoursquareService
+ * 
+ * @author david
+ */
 public class FoursquareService implements Service
 {
 	private static final String TAG = "FoursquareService";
@@ -15,6 +20,11 @@ public class FoursquareService implements Service
 	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
 	
+	/**
+	 * FoursquareService
+	 * 
+	 * @param resources
+	 */
 	public FoursquareService(Resources resources)
 	{
 		config = new Properties();
@@ -35,26 +45,51 @@ public class FoursquareService implements Service
 		
 	}
 
+	/**
+	 * getName
+	 * 
+	 * @return String
+	 */
 	public String getName() 
 	{
 		return "Foursquare";
 	}
 	
+	/**
+	 * getLogo
+	 * 
+	 * @return DrawableListItem
+	 */
 	public DrawableListItem getLogo()
 	{
 		return logo;
 	}
 
+	/**
+	 * getOAuthConnector
+	 * 
+	 * @return OAuthConnector
+	 */
 	public OAuthConnector getOAuthConnector() 
 	{
 		return oauth_connector;
 	}
 
+	/**
+	 * getNewOAuthRequest
+	 * 
+	 * @return Request
+	 */
 	public Request getNewOAuthRequest() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	/**
+	 * connected
+	 * 
+	 * @return boolean
+	 */
 	public boolean connected(SharedPreferences settings)
 	{
 		return settings.contains("foursquare_oauth_token") && 

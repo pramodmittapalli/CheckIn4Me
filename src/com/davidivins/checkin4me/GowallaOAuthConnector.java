@@ -2,8 +2,6 @@ package com.davidivins.checkin4me;
 
 import java.net.URLEncoder;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
 
 import org.json.JSONObject;
 
@@ -12,6 +10,11 @@ import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.util.Log;
 
+/**
+ * GowallaOAuthConnector
+ * 
+ * @author david
+ */
 public class GowallaOAuthConnector implements OAuthConnector
 {
 	private static final String TAG = "GowallaOAuthConnector";
@@ -20,6 +23,11 @@ public class GowallaOAuthConnector implements OAuthConnector
 	private Properties config;
 	private String oauth_redirect_uri;
 	
+	/**
+	 * GowallaOAuthConnector
+	 * 
+	 * @param config
+	 */
 	GowallaOAuthConnector(Properties config) 
 	{
 		this.config = config;
@@ -35,16 +43,33 @@ public class GowallaOAuthConnector implements OAuthConnector
 		}
 	}
 
+	/**
+	 * beginHandshake
+	 * 
+	 * @return OAuthResponse
+	 */
 	public OAuthResponse beginHandshake() 
 	{
 		return new OAuthResponse(true, "");
 	}
 
+	/**
+	 * isSuccessfulInitialResponse
+	 * 
+	 * @param OAuthResponse
+	 * @return boolean
+	 */
 	public boolean isSuccessfulInitialResponse(OAuthResponse response) 
 	{
 		return true;
 	}
 
+	/**
+	 * storeNecessaryInitialResponseData
+	 * 
+	 * @param Editor
+	 * @param OAuthResponse
+	 */
 	public void storeNecessaryInitialResponseData(Editor settingsEditor, OAuthResponse response) { }
 
 	public String generateAuthorizationURL(SharedPreferences settings) 
@@ -57,6 +82,12 @@ public class GowallaOAuthConnector implements OAuthConnector
 		return url;
 	}
 
+	/**
+	 * isSuccessfulAuthorizationResponse
+	 * 
+	 * @param Uri
+	 * @return boolean
+	 */
 	public boolean isSuccessfulAuthorizationResponse(Uri response) 
 	{
 		boolean is_successful = false;
@@ -68,6 +99,12 @@ public class GowallaOAuthConnector implements OAuthConnector
 		return is_successful;
 	}
 	
+	/**
+	 * storeNecessaryAuthorizationResponseData
+	 * 
+	 * @param Editor
+	 * @param Uri
+	 */
 	public void storeNecessaryAuthorizationResponseData(Editor settings_editor, Uri response)
 	{
 		Log.i(TAG, "code = " + response.getQueryParameter("code"));
@@ -75,6 +112,13 @@ public class GowallaOAuthConnector implements OAuthConnector
 		settings_editor.commit();
 	}
 
+	/**
+	 * completeHandshake
+	 * 
+	 * @param SharedPreferences
+	 * @param Uri
+	 * @return OAuthResponse
+	 */
 	public OAuthResponse completeHandshake(SharedPreferences settings, Uri previous_response) 
 	{
 		OAuthResponse response = new OAuthResponse();
@@ -101,6 +145,12 @@ public class GowallaOAuthConnector implements OAuthConnector
 		return response;
 	}
 	
+	/**
+	 * isSuccessfulCompletionResponse
+	 * 
+	 * @param OAuthResponse response
+	 * @return boolean
+	 */
 	public boolean isSuccessfulCompletionResponse(OAuthResponse response) 
 	{
 		boolean is_successful = false;
@@ -120,6 +170,12 @@ public class GowallaOAuthConnector implements OAuthConnector
 		return is_successful;
 	}
 	
+	/**
+	 * storeNecessaryCompletionResponseData
+	 * 
+	 * @param Editor
+	 * @param OAuthResponse
+	 */
 	public void storeNecessaryCompletionResponseData(Editor settings_editor, OAuthResponse response) 
 	{ 
 		try

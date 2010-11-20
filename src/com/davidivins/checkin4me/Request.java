@@ -3,6 +3,11 @@ package com.davidivins.checkin4me;
 import java.util.TreeMap;
 import android.util.Log;
 
+/**
+ * Request
+ * 
+ * @author david
+ */
 abstract public class Request 
 {
 	protected static final String TAG      = "Request";
@@ -13,6 +18,9 @@ abstract public class Request
 	protected String endpoint;
 	protected TreeMap<String, String> query_parameters;
 	
+	/**
+	 * Request
+	 */
 	public Request()
 	{
 		method = "";
@@ -21,6 +29,13 @@ abstract public class Request
 		query_parameters = new TreeMap<String, String>();	
 	}
 	
+	/**
+	 * Request
+	 * 
+	 * @param method
+	 * @param host
+	 * @param endpoint
+	 */
 	public Request(String method, String host, String endpoint)
 	{
 		this.method = method;
@@ -29,6 +44,11 @@ abstract public class Request
 		query_parameters = new TreeMap<String, String>();	
 	}
 	
+	/**
+	 * Request
+	 * 
+	 * @param request
+	 */
 	public Request(Request request)
 	{
 		this.method = request.getMethod();
@@ -39,48 +59,99 @@ abstract public class Request
 		query_parameters.putAll(request.getQueryParameters());
 	}
 	
+	/**
+	 * execute
+	 * 
+	 * @return Response
+	 */
 	abstract public Response execute();
 
+	/**
+	 * setMethod
+	 * 
+	 * @param method
+	 */
 	public void setMethod(String method)
 	{
 		this.method = method;
 	}
 	
+	/**
+	 * setHost
+	 * 
+	 * @param host
+	 */
 	public void setHost(String host)
 	{
 		this.host = host;
 	}
 	
+	/**
+	 * setEndpoint
+	 * 
+	 * @param endpoint
+	 */
 	public void setEndpoint(String endpoint)
 	{
 		this.endpoint = endpoint;
 	}
 	
+	/**
+	 * addQueryParameter
+	 * 
+	 * @param key
+	 * @param value
+	 */
 	public void addQueryParameter(String key, String value)
 	{
 		query_parameters.put(key, value);
 	}
 	
+	/**
+	 * getMethod
+	 * 
+	 * @return String
+	 */
 	public String getMethod()
 	{
 		return method;
 	}
 	
+	/**
+	 * getHost
+	 * 
+	 * @return String
+	 */
 	public String getHost()
 	{
 		return host;
 	}
 	
+	/**
+	 * getEndpoint
+	 * 
+	 * @return String
+	 */
 	public String getEndpoint()
 	{
 		return endpoint;
 	}
 	
+	/**
+	 * getQueryParameters
+	 * 
+	 * @return TreeMap<String, String>
+	 */
 	public TreeMap<String, String> getQueryParameters()
 	{
 		return query_parameters;
 	}
 	
+	/**
+	 * getURIQueryParametersAsString
+	 * 
+	 * @return String
+	 */
 	protected String getURIQueryParametersAsString()
 	{
 		String uri_query_parameters = "";

@@ -7,6 +7,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.util.Log;
 
+/**
+ * GowallaService
+ * 
+ * @author david
+ */
 public class GowallaService implements Service
 {
 	private static final String TAG = "GowallaService";
@@ -14,6 +19,11 @@ public class GowallaService implements Service
 	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
 	
+	/**
+	 * GowallaService
+	 * 
+	 * @param resources
+	 */
 	public GowallaService(Resources resources)
 	{
 		config = new Properties();
@@ -32,27 +42,53 @@ public class GowallaService implements Service
 		}
 	}
 
+	/**
+	 * getName
+	 * 
+	 * @return String
+	 */
 	public String getName() 
 	{
 		return "Gowalla";
 	}
 	
+	/**
+	 * getLogo
+	 * 
+	 * @return DrawableListItem
+	 */
 	public DrawableListItem getLogo()
 	{
 		return logo;
 	}
 
+	/**
+	 * getOAuthConnector
+	 * 
+	 * @return OAuthConnector
+	 */
 	public OAuthConnector getOAuthConnector() 
 	{
 		return oauth_connector;
 	}
 
+	/**
+	 * getNewOAuthRequest
+	 * 
+	 * @return Request
+	 */
 	public Request getNewOAuthRequest() 
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
+	/**
+	 * connected
+	 * 
+	 * @param SharedPreferences
+	 * @return boolean
+	 */
 	public boolean connected(SharedPreferences settings)
 	{
 		return settings.contains("gowalla_access_token") && 

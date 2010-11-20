@@ -4,6 +4,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 
+/**
+ * OAuthConnector
+ * 
+ * @author david
+ */
 abstract interface OAuthConnector
 {
 	abstract OAuthResponse beginHandshake();

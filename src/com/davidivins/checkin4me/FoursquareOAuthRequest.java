@@ -18,6 +18,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.util.Base64;
 import android.util.Log;
 
+/**
+ * FoursquareOAuthRequest
+ * 
+ * @author david
+ */
 public class FoursquareOAuthRequest extends Request 
 {
 	private static final String TAG               = "FoursquareOAuthRequest";

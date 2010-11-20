@@ -9,19 +9,32 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+/**
+ * ServiceConnection
+ * 
+ * @author david
+ */
 public class ServiceConnection extends ListActivity implements OnItemClickListener
 {
 	private static final String TAG = "ServiceConnection";
 
-	/** Called when the activity is first created. */
+	/**
+	 * onCreate
+	 * 
+	 * @param Bundle savedInstanceState
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -31,13 +44,13 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		ArrayList<Service> services_list = 
 			Services.getInstance(this).getServicesAsArrayList();
 		
-		for (Service service : services_list)
+		// if a service is connected, skip services screen
+		boolean forced_to_activity = getIntent().getBooleanExtra("force", false);
+		if (!forced_to_activity &&
+			Services.getInstance(this).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(this)))
 		{
-			if (service.connected(PreferenceManager.getDefaultSharedPreferences(this)))
-			{
-				Intent i = new Intent(this, NearbyPlaces.class);
-				startActivity(i);
-			}
+			Intent i = new Intent(this, NearbyPlaces.class);
+			startActivity(i);
 		}
 
 		// define the list which holds the information of the list
@@ -55,7 +68,7 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		}
 
 		SimpleAdapter service_images = new SimpleAdapter(this, resource_names,
-			R.layout.serviceconnection, Services.getInstance(this).getLogoKeys(), 
+			R.layout.service_connection, Services.getInstance(this).getLogoKeys(), 
 			Services.getInstance(this).getLogoIds());
 
         setListAdapter(service_images);
@@ -66,13 +79,77 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		lv.setBackgroundColor(Color.WHITE); 
 	}
 	
+	/**
+	 * onItemClick
+	 * 
+	 * @param AdapterView<?> arg0
+	 * @param View view
+	 * @param int position
+	 * @param long row
+	 */
 	public void onItemClick(AdapterView<?> arg0, View view, int position, long row) 
 	{
-		Intent i = new Intent(this, Authorization.class);
-		
 		// save position as service id for service connection activity
 		Log.i(TAG, "clicked service id = " + position);
-		i.putExtra("service_id", position);
-		startActivity(i);
+		
+		if (Services.getInstance(this).getServiceById(position).getOAuthConnector() != null)
+		{
+			Intent i = new Intent(this, Authorization.class);
+			i.putExtra("service_id", position);
+			startActivity(i);
+		}
+		else
+		{
+			CharSequence msg = Services.getInstance(this).getServiceById(position).getName()
+				+ " doesn't work yet :(";
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+			Log.e(TAG, Services.getInstance(this).getServiceById(position).getName() + " service doesn't work yet :(");
+		}
+	}
+	
+	/**
+	 * onCreateOptionsMenu
+	 * 
+	 * @param Menu menu
+	 * @return boolean
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) 
+	{
+		boolean result = false;
+		
+		if (Services.getInstance(this).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(this)))
+		{
+			MenuInflater inflater = getMenuInflater();
+			inflater.inflate(R.menu.service_connection, menu);
+			result = true;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * onOptionsItemSelected
+	 * 
+	 * @param MenuItem item
+	 * @return boolean
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) 
+	{
+		boolean result = false;
+		
+		// Handle item selection
+		switch (item.getItemId()) 
+		{
+			case R.id.nearby_places:
+				Intent i = new Intent(this, NearbyPlaces.class);
+				startActivity(i);
+				result = true;
+			default:
+				result = false;
+		}
+		
+		return result;
 	}
 }

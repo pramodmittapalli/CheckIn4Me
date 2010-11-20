@@ -8,12 +8,22 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
+/**
+ * Authorization
+ * 
+ * @author david
+ */
 public class Authorization extends Activity
 {	
 	private static final String TAG = "Authorization";
-	
-	/** Called when the activity is first created. */
+
+	/**
+	 * onCreate
+	 * 
+	 * @param Bundle saved_instance_state
+	 */
 	@Override
 	public void onCreate(Bundle saved_instance_state)
 	{
@@ -85,16 +95,20 @@ public class Authorization extends Activity
 				else
 				{
 					Log.e(TAG, "Failed to complete handshake: " + response.getResponseString());
+					Toast.makeText(getApplicationContext(), "Failed to complete handshake.", Toast.LENGTH_SHORT).show();
 				}
 			}
 			else
 			{
 				Log.e(TAG, "Failed to authorize app: " + uri.toString());
+				Toast.makeText(getApplicationContext(), "Failed to authorize app.", Toast.LENGTH_SHORT).show();
 			}
 		}
 		else
 		{
 			Log.i(TAG, "No service clicked and no handshake in progress");
+			Toast.makeText(getApplicationContext(), "No service clicked and no handshake in progress.", 
+					Toast.LENGTH_SHORT).show();
 		}
 		
 		settings_editor.commit();
