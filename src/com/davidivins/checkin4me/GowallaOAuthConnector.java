@@ -75,8 +75,9 @@ public class GowallaOAuthConnector implements OAuthConnector
 	public String generateAuthorizationURL(SharedPreferences settings) 
 	{
 		String url = config.getProperty("oauth_host") + config.getProperty("oauth_new_token_endpoint")
-			+ "?redirect_uri=" + oauth_redirect_uri
-			+ "&client_id=" + config.getProperty("oauth_client_id");
+			+ "?client_id=" + config.getProperty("oauth_client_id")
+			+ "&redirect_uri=" + oauth_redirect_uri 
+			+ "&scope=" + config.getProperty("api_scope");
 		
 		Log.i(TAG, "authorization url = " + url);
 		return url;
@@ -134,6 +135,7 @@ public class GowallaOAuthConnector implements OAuthConnector
 			request.addQueryParameter("client_secret", config.getProperty("oauth_client_secret"));
 			request.addQueryParameter("code", settings.getString("gowalla_code", "-1"));
 			request.addQueryParameter("redirect_uri", oauth_redirect_uri);
+			request.addQueryParameter("scope", config.getProperty("api_scope"));
 			
 			response = (OAuthResponse)request.execute();
 		}
@@ -190,5 +192,17 @@ public class GowallaOAuthConnector implements OAuthConnector
 		{
 			Log.i(TAG, "response is not json - " + response.getResponseString());
 		}
+	}
+	
+	/**
+	 * clearTemporarySettings
+	 * 
+	 * @param Editor
+	 */
+	public void clearTemporaryData(Editor settings_editor)
+	{
+		// clear initial values
+		settings_editor.putString("gowalla_code", null);
+		settings_editor.commit();
 	}
 }

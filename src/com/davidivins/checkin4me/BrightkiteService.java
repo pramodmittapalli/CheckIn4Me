@@ -1,6 +1,7 @@
 package com.davidivins.checkin4me;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import android.content.SharedPreferences;
@@ -18,6 +19,11 @@ public class BrightkiteService implements Service
 	private Properties config;
 	private DrawableListItem logo;
 	
+	/**
+	 * BrightkiteService
+	 * 
+	 * @param resources
+	 */
 	public BrightkiteService(Resources resources)
 	{
 		config = new Properties();
@@ -34,32 +40,64 @@ public class BrightkiteService implements Service
 		}
 	}
 
+	/**
+	 * getName
+	 * 
+	 * @return String
+	 */
 	public String getName() 
 	{
 		return "Brightkite";
 	}
 	
+	/**
+	 * getLogo
+	 * 
+	 * @return DrawableListItem
+	 */
 	public DrawableListItem getLogo()
 	{
 		return logo;
 	}
 	
+	/**
+	 * getIconDrawable
+	 * 
+	 * @return int
+	 */
 	public int getIconDrawable()
 	{
 		return R.drawable.brightkite25x25;
 	}
 
+	/**
+	 * getOAuthConnector
+	 * 
+	 * @return null
+	 */
 	public OAuthConnector getOAuthConnector() 
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Request getNewOAuthRequest() {
-		// TODO Auto-generated method stub
+		// brightkite doesn't work yet
 		return null;
 	}
 	
+	/**
+	 * getAPIAdapter
+	 * 
+	 * @return APIAdapter
+	 */
+	public APIAdapter getAPIAdapter()
+	{
+		// brightkite doesn't work yet
+		return null;
+	}
+	
+	/**
+	 * connected
+	 * 
+	 * @param SharedPreferences 
+	 * @return boolean
+	 */
 	public boolean connected(SharedPreferences settings)
 	{
 		return false;

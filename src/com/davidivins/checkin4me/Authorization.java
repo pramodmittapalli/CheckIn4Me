@@ -91,6 +91,9 @@ public class Authorization extends Activity
 					
 					// start nearby places event
 					i = new Intent(this, NearbyPlaces.class);
+					
+					// clear temporary data
+					oauth_connector.clearTemporaryData(settings_editor);
 				}
 				else
 				{

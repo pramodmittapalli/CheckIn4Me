@@ -42,15 +42,6 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		// initialize services and get list
 		ArrayList<Service> services_list = 
 			Services.getInstance(this).getServicesAsArrayList();
-		
-		// if a service is connected, skip services screen
-		boolean forced_to_activity = getIntent().getBooleanExtra("force", false);
-		if (!forced_to_activity &&
-			Services.getInstance(this).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(this)))
-		{
-			Intent i = new Intent(this, NearbyPlaces.class);
-			startActivity(i);
-		}
 
 		// define the list which holds the information of the list
 		List<Map<String, Object>> resource_names =

@@ -7,6 +7,13 @@
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
 	
+		<activity android:name=".CheckIn4Me" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		
 		<activity android:name=".ServiceConnection" android:label="@string/service_connection_title">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

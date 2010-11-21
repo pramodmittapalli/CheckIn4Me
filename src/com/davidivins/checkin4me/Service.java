@@ -1,5 +1,7 @@
 package com.davidivins.checkin4me;
 
+import java.util.ArrayList;
+
 import android.content.SharedPreferences;
 
 /**
@@ -13,6 +15,6 @@ public interface Service
 	abstract public DrawableListItem getLogo();
 	abstract public int getIconDrawable();
 	abstract public OAuthConnector getOAuthConnector();
-	abstract public Request getNewOAuthRequest();
+	abstract public APIAdapter getAPIAdapter();
 	abstract public boolean connected(SharedPreferences settings);
 }

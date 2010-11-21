@@ -1,6 +1,7 @@
 package com.davidivins.checkin4me;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ public class GowallaService implements Service
 	private Properties config;
 	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
+	private APIAdapter api_adapter;
 	
 	/**
 	 * GowallaService
@@ -35,6 +37,7 @@ public class GowallaService implements Service
 			config.load(config_file);
 			
 			oauth_connector = new GowallaOAuthConnector(config);
+			api_adapter = new GowallaAPIAdapter(config);
 		} 
 		catch (Exception e) 
 		{
@@ -81,16 +84,15 @@ public class GowallaService implements Service
 	{
 		return oauth_connector;
 	}
-
+	
 	/**
-	 * getNewOAuthRequest
+	 * getAPIAdapter
 	 * 
-	 * @return Request
+	 * @return APIAdapter
 	 */
-	public Request getNewOAuthRequest() 
+	public APIAdapter getAPIAdapter()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return api_adapter;
 	}
 	
 	/**

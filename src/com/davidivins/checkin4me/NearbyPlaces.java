@@ -3,13 +3,16 @@ package com.davidivins.checkin4me;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,6 +21,9 @@ import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import android.os.SystemClock;
+import android.preference.PreferenceManager;
+
 /**
  * NearbyPlaces
  * 
@@ -25,9 +31,11 @@ import android.widget.AdapterView.OnItemClickListener;
  */
 public class NearbyPlaces extends ListActivity implements LocationListener, OnItemClickListener
 {
-	//private static final String TAG = "NearbyPlaces";
+	private static final String TAG = "NearbyPlaces";
 
 	private static ArrayList<Locale> locations = new ArrayList<Locale>();
+	private static LocationManager location_manager = null;
+	private static ProgressDialog loading_dialog = null;
 	
 	/**
 	 * onCreate
@@ -40,23 +48,40 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		super.onCreate(savedInstanceState);
 		
 		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		location_manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		// Register the listener with the Location Manager to receive location updates
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
-		
+		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
+	
+		loading_dialog = ProgressDialog.show(this, "", "Acquiring GPS Location...", true);
 		setContentView(R.layout.nearby_places);
 		
-		locations.clear();
-		getMockLocations();
-		
-		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
-		setListAdapter(adapter);
-		
+//		locations.clear();
+//		getMockLocations();
+//		
+//		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
+//		setListAdapter(adapter);
+//		
 		getListView().setTextFilterEnabled(true);
+		getListView().setOnItemClickListener(this);
 		getListView().setBackgroundColor(Color.WHITE);
 		getListView().setCacheColorHint(Color.WHITE);
-		getListView().setOnItemClickListener(this);
+	}
+	
+	/**
+	 * onStop
+	 */
+	public void onStop()
+	{
+		super.onStop();
+		
+		// stop the gps when pausing the activity
+		if (location_manager != null)
+			location_manager.removeUpdates(this);
+		
+		// cancel any dialogs showing
+		if (loading_dialog != null && loading_dialog.isShowing())
+			loading_dialog.cancel();
 	}
 
 	/**
@@ -66,9 +91,36 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	 */
     public void onLocationChanged(Location location) 
     {
-    	String latitude = Double.toString(location.getLatitude());
+    	// cancel further updates
+    	location_manager.removeUpdates(this);
+    	
+    	// cancel acquiring location dialog
+    	if (loading_dialog.isShowing())
+    		loading_dialog.cancel();
+
+    	// start retrieving locations dialog
+    	loading_dialog = ProgressDialog.show(this, "", "Retrieving Service Locations...", true);
+    	
+    	// get longitude and latitude
     	String longitude = Double.toString(location.getLongitude());
-    	Toast.makeText(getApplicationContext(), "Lat = " + latitude + ", Long = " + longitude, Toast.LENGTH_SHORT).show();
+    	String latitude = Double.toString(location.getLatitude());
+		
+    	// get preferences for retrieving locations
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		locations.clear();
+		locations = Services.getInstance(this).getAllLocations(longitude, latitude, settings);
+		
+		if (locations.isEmpty())
+			Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
+		
+		getMockLocations();
+		
+		// setup list for retrieved locations
+		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
+		setListAdapter(adapter);
+		
+		// cancel loading dialog
+		loading_dialog.cancel();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -100,9 +152,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		switch (item.getItemId()) 
 		{
 			case R.id.connect_services:
-				Intent i = new Intent(this, ServiceConnection.class);
-				i.putExtra("force", true);
-				startActivity(i);
+				startActivity(new Intent(this, ServiceConnection.class));
 				return true;
 			default:
 				return false;

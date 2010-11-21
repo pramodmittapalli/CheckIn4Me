@@ -96,8 +96,8 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	public void storeNecessaryInitialResponseData(Editor settings_editor, OAuthResponse response)
 	{
 		TreeMap<String, String> parameters = response.getQueryParameters();
-		settings_editor.putString("foursquare_oauth_token_secret", parameters.get("oauth_token_secret"));
-		settings_editor.putString("foursquare_oauth_token", parameters.get("oauth_token"));
+		settings_editor.putString("foursquare_initial_oauth_token_secret", parameters.get("oauth_token_secret"));
+		settings_editor.putString("foursquare_initial_oauth_token", parameters.get("oauth_token"));
 		settings_editor.commit();
 	}
 	
@@ -106,11 +106,11 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	 * 
 	 * @return String
 	 */
-	public String generateAuthorizationURL(SharedPreferences settings)//String oauth_token)
+	public String generateAuthorizationURL(SharedPreferences settings)
 	{
 		return config.getProperty("oauth_host") + 
 			config.getProperty("oauth_authorize_endpoint") + "?" + 
-			"oauth_token=" + settings.getString("foursquare_oauth_token", "-1");//oauth_token;
+			"oauth_token=" + settings.getString("foursquare_initial_oauth_token", "-1");
 	}
 	
 	/**
@@ -151,7 +151,7 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	{
 		OAuthResponse response = new OAuthResponse();
 		
-		String oauth_token_secret = settings.getString("foursquare_oauth_token_secret", null); 
+		String oauth_token_secret = settings.getString("foursquare_initial_oauth_token_secret", null); 
 		String oauth_token = previous_response.getQueryParameter("oauth_token");
 		String oauth_verifier = previous_response.getQueryParameter("oauth_verifier");
 		
@@ -211,5 +211,18 @@ public class FoursquareOAuthConnector implements OAuthConnector
 		
 		Log.i(TAG, "oauth_token_secret = " + parameters.get("oauth_token_secret"));
 		Log.i(TAG, "oauth_token = " + parameters.get("oauth_token"));
+	}
+	
+	/**
+	 * clearTemporarySettings
+	 * 
+	 * @param Editor
+	 */
+	public void clearTemporaryData(Editor settings_editor)
+	{
+		// clear initial values
+		settings_editor.putString("foursquare_initial_oauth_token_secret", null);
+		settings_editor.putString("foursquare_initial_oauth_token", null);
+		settings_editor.commit();
 	}
 }

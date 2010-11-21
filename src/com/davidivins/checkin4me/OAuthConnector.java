@@ -20,4 +20,5 @@ abstract interface OAuthConnector
 	abstract OAuthResponse completeHandshake(SharedPreferences settings, Uri previous_response);
 	abstract boolean isSuccessfulCompletionResponse(OAuthResponse response);
 	abstract void storeNecessaryCompletionResponseData(Editor settings_editor, OAuthResponse response);
+	abstract void clearTemporaryData(Editor settings_editor);
 }

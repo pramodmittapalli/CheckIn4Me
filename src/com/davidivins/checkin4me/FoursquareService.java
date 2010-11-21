@@ -19,6 +19,7 @@ public class FoursquareService implements Service
 	private Properties config;
 	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
+	private APIAdapter api_adapter;
 	
 	/**
 	 * FoursquareService
@@ -37,6 +38,7 @@ public class FoursquareService implements Service
 			
 			// create oauth connector with current configuration
 			oauth_connector =  new FoursquareOAuthConnector(config);
+			api_adapter = new FoursquareAPIAdapter(config);
 		} 
 		catch (Exception e) 
 		{
@@ -84,15 +86,15 @@ public class FoursquareService implements Service
 	{
 		return oauth_connector;
 	}
-
+	
 	/**
-	 * getNewOAuthRequest
+	 * getAPIAdapter
 	 * 
-	 * @return Request
+	 * @return APIAdapter
 	 */
-	public Request getNewOAuthRequest() {
-		// TODO Auto-generated method stub
-		return null;
+	public APIAdapter getAPIAdapter()
+	{
+		return api_adapter;
 	}
 	
 	/**
