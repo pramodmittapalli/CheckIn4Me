@@ -43,6 +43,11 @@ public class BrightkiteService implements Service
 	{
 		return logo;
 	}
+	
+	public int getIconDrawable()
+	{
+		return R.drawable.brightkite25x25;
+	}
 
 	public OAuthConnector getOAuthConnector() 
 	{

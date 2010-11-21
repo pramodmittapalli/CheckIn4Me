@@ -61,6 +61,16 @@ public class GowallaService implements Service
 	{
 		return logo;
 	}
+	
+	/**
+	 * getIconDrawable
+	 * 
+	 * @return int
+	 */
+	public int getIconDrawable()
+	{
+		return R.drawable.gowalla25x25;
+	}
 
 	/**
 	 * getOAuthConnector

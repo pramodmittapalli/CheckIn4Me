@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -72,11 +71,10 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 			Services.getInstance(this).getLogoIds());
 
         setListAdapter(service_images);
-
-        ListView lv = getListView();
-		lv.setTextFilterEnabled(true);
-		lv.setOnItemClickListener(this);
-		lv.setBackgroundColor(Color.WHITE); 
+        getListView().setTextFilterEnabled(true);
+		getListView().setOnItemClickListener(this);
+		getListView().setBackgroundColor(Color.WHITE);
+		getListView().setCacheColorHint(Color.WHITE);
 	}
 	
 	/**

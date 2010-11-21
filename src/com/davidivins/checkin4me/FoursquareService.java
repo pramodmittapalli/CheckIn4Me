@@ -64,6 +64,16 @@ public class FoursquareService implements Service
 	{
 		return logo;
 	}
+	
+	/**
+	 * getIconDrawable
+	 * 
+	 * @return int
+	 */
+	public int getIconDrawable()
+	{
+		return R.drawable.foursquare25x25;
+	}
 
 	/**
 	 * getOAuthConnector

@@ -1,49 +1,34 @@
 package com.davidivins.checkin4me;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
+import android.widget.AdapterView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 /**
  * NearbyPlaces
  * 
  * @author david
  */
-public class NearbyPlaces extends ListActivity implements LocationListener
+public class NearbyPlaces extends ListActivity implements LocationListener, OnItemClickListener
 {
-	private static final String TAG = "NearbyPlaces";
+	//private static final String TAG = "NearbyPlaces";
 
+	private static ArrayList<Locale> locations = new ArrayList<Locale>();
+	
 	/**
 	 * onCreate
 	 * 
@@ -53,142 +38,36 @@ public class NearbyPlaces extends ListActivity implements LocationListener
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		
 		// Acquire a reference to the system Location Manager
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
 		// Register the listener with the Location Manager to receive location updates
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
-
-//		ScrollView sv = new ScrollView(this);
-//		LinearLayout lv = new LinearLayout(this);
-//		lv.setOrientation(LinearLayout.VERTICAL);
-//		
-//		for (int i = 0; i < 20; i++)
-//		{
-//			lv.addView(getRow());
-//		}
-//		sv.addView(lv);
-//		
-//		setContentView(sv);
-
-		class LinearLayoutAdapter extends ArrayAdapter<LinearLayout>
-		{
-			private ArrayList<LinearLayout> items;
-
-			public LinearLayoutAdapter(Context context, int textViewResourceId, ArrayList<LinearLayout> items) 
-			{
-				super(context, textViewResourceId, items);
-				this.items = items;
-	        }
-
-			@Override
-			public View getView(int position, View convertView, ViewGroup parent) 
-			{
-				View v = convertView;
-				if (v == null) 
-				{
-					LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					v = vi.inflate(R.layout.nearby_place_row, null);
-				}
-				
-				LinearLayout row = items.get(position);
-				if (row != null) 
-				{
-					LinearLayout lv = (LinearLayout)v.findViewById(R.id.nearby_place);
-					lv.setOrientation(LinearLayout.VERTICAL);
-					
-					LinearLayout text_line = new LinearLayout(parent.getContext());
-					LinearLayout icon_line = new LinearLayout(parent.getContext());
-					text_line.setPadding(5, 5, 5, 5);
-					icon_line.setPadding(5, 5, 5, 5);
-
-					
-					TextView tv = new TextView(parent.getContext());
-					tv.setText("Some Place!!");
-					tv.setTextColor(Color.BLACK);
-					text_line.addView(tv);
-					
-					ImageView fs = new ImageView(parent.getContext());
-			        fs.setImageResource(R.drawable.foursquare20x20);      
-					fs.setPadding(0, 0, 5, 0);
-					icon_line.addView(fs);
-			        
-					ImageView g = new ImageView(parent.getContext());
-			        g.setImageResource(R.drawable.gowalla20x20);
-					g.setPadding(0, 0, 5, 0);
-					icon_line.addView(g);
-
-					ImageView bk = new ImageView(parent.getContext());
-			        bk.setImageResource(R.drawable.brightkite20x20);
-					bk.setPadding(0, 0, 5, 0);
-					icon_line.addView(bk);
-
-					lv.addView(text_line);
-					lv.addView(icon_line);
-				}
-				
-				return v;
-	        }
-		}
 		
 		setContentView(R.layout.nearby_places);
-		ArrayList<LinearLayout> rows = new ArrayList<LinearLayout>();
 		
-		for (int i = 0; i < 20; i++)
-		{
-		rows.add(getRow());
-		}
-		LinearLayoutAdapter adapter = new LinearLayoutAdapter(this, R.layout.nearby_place_row, rows);
+		locations.clear();
+		getMockLocations();
+		
+		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
 		setListAdapter(adapter);
 		
 		getListView().setTextFilterEnabled(true);
-		getListView().setBackgroundColor(Color.WHITE); 
-		
-	}
-	
-	LinearLayout getRow()
-	{
-		LinearLayout row = new LinearLayout(this);
-		row.setOrientation(LinearLayout.VERTICAL);
-
-		LinearLayout text_line = new LinearLayout(this);
-		LinearLayout icon_line = new LinearLayout(this);
-		
-		text_line.setOrientation(LinearLayout.HORIZONTAL);
-		icon_line.setOrientation(LinearLayout.HORIZONTAL);
-		
-		row.addView(text_line);
-		row.addView(icon_line);
-		
-		TextView tv = new TextView(this);
-		tv.setText("Some Place!!");
-		text_line.addView(tv);
-		
-		ImageView fs = new ImageView(this);
-        fs.setImageResource(R.drawable.foursquare20x20);        
-        icon_line.addView(fs);
-        
-		ImageView g = new ImageView(this);
-        g.setImageResource(R.drawable.gowalla20x20);
-        icon_line.addView(g);
-        
-		ImageView bk = new ImageView(this);
-        bk.setImageResource(R.drawable.brightkite20x20);
-        icon_line.addView(bk); 
-        
-        return row;
+		getListView().setBackgroundColor(Color.WHITE);
+		getListView().setCacheColorHint(Color.WHITE);
+		getListView().setOnItemClickListener(this);
 	}
 
 	/**
 	 * onLocationChanged
 	 * 
-	 * @param Location location
+	 * @param Locale location
 	 */
     public void onLocationChanged(Location location) 
     {
     	String latitude = Double.toString(location.getLatitude());
     	String longitude = Double.toString(location.getLongitude());
-    	Log.i(TAG, "here");
     	Toast.makeText(getApplicationContext(), "Lat = " + latitude + ", Long = " + longitude, Toast.LENGTH_SHORT).show();
     }
 
@@ -229,25 +108,64 @@ public class NearbyPlaces extends ListActivity implements LocationListener
 				return false;
 		}
 	}
-}
+
+	/**
+	 * onItemClick
+	 * 
+	 * @param AdapterView<?> adapter_view
+	 * @param View view
+	 * @param int  
+	 * @param long arg3
+	 */
+	public void onItemClick(AdapterView<?> adapter_view, View view, int position, long arg3) 
+	{
+		Locale location = locations.get(position);
 		
-		/*		String services[] = {
-		"Foursquare",
-		"Gowalla",
-		"BrightKite",
-		"Yelp",
-		"Facebook" };
-
-		setListAdapter(new ArrayAdapter<String>(this, R.layout.serviceconnection, services));
-				
-		ListView lv = getListView();
-		lv.setTextFilterEnabled(true);
-
-		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-						// When clicked, show a toast with the TextView text
-							Toast.makeText(getApplicationContext(), ((TextView)view).getText(),
-									Toast.LENGTH_SHORT).show();
-			}
-		});*/
+		Toast.makeText(this, "Location Name: " + location.getName() + 
+				"\n Longitude: " + location.getLongitude() + 
+				"\n Latitude: " + location.getLatitude(), Toast.LENGTH_LONG).show();
+	}
+	
+	private void getMockLocations()
+	{
+		Locale location = new Locale("Dave's House", "", "666", "6666");
+		location.mapServiceIdToLocationId(0, "");
+		location.mapServiceIdToLocationId(1, "");
+		location.mapServiceIdToLocationId(2, "");
+		locations.add(location);
+		
+		Locale location0 = new Locale("Dave's Gay Neighbors' House", "", "000", "0000");
+		location0.mapServiceIdToLocationId(0, "");
+		location0.mapServiceIdToLocationId(1, "");
+		location0.mapServiceIdToLocationId(2, "");
+		locations.add(location0);
+		
+		Locale location1 = new Locale("Genise's House", "", "13", "1313");
+		location1.mapServiceIdToLocationId(0, "");
+		location1.mapServiceIdToLocationId(2, "");
+		locations.add(location1);
+		
+		Locale location2 = new Locale("Taco Bell", "", "111", "1111");
+		location2.mapServiceIdToLocationId(0, "");
+		location2.mapServiceIdToLocationId(1, "");
+		locations.add(location2);
+		
+		Locale location3 = new Locale("Wawa", "", "222", "2222");
+		location3.mapServiceIdToLocationId(0, "");
+		location3.mapServiceIdToLocationId(1, "");
+		location3.mapServiceIdToLocationId(2, "");
+		locations.add(location3);
+		
+		Locale location4 = new Locale("Applebees", "", "999", "9999");
+		location4.mapServiceIdToLocationId(1, "");
+		location4.mapServiceIdToLocationId(2, "");
+		locations.add(location4);
+		
+		for (int i = 0; i < 5; i++)
+		{
+			Locale location5 = new Locale("Party Central", "", Integer.toString(i), Integer.toString(i * 5));
+			location5.mapServiceIdToLocationId(2, "");
+			locations.add(location5);
+		}
+	}
+}
