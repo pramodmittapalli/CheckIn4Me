@@ -2,7 +2,14 @@
 <resources>
     <string name="app_name">CheckIn4Me</string>
     
+    <string name="service_connection_title">Connect Services</string>
+ 	<string name="authorization_title">Authorization</string>
+	<string name="nearby_places_title">Nearby Places</string>
+    
     <string name="menu_option_connect">Connect More Services</string>
 	<string name="menu_option_nearby">Nearby Places</string>
+	
+	<string name="authorizing_msg">Authorizing...</string>
+	<string name="no_nearby_places_msg">There are not any places nearby!</string>
     
 </resources>

@@ -7,6 +7,6 @@
 <TextView  
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content" 
-    android:text="Authorizing..."
+    android:text="@string/authorizing_msg"
     />
 </LinearLayout>

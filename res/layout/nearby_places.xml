@@ -12,5 +12,5 @@
 		android:id="@+id/android:empty"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:text="There are not any places nearby!" />
+		android:text="@string/no_nearby_places_msg" />
 </LinearLayout>
