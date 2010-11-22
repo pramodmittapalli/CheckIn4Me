@@ -6,5 +6,7 @@ import android.content.SharedPreferences;
 
 public interface APIAdapter 
 {
-	abstract public ArrayList<Locale> getLocations(String longitude, String latitude, SharedPreferences settings);
+	//abstract public ArrayList<Locale> getLocations(String longitude, String latitude, SharedPreferences settings);
+	abstract public Runnable getLocationThread(String longitude, String latitude, SharedPreferences settings);
+	abstract public ArrayList<Locale> getLatestLocations();
 }

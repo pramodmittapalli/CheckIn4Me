@@ -2,6 +2,7 @@ package com.davidivins.checkin4me;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -35,6 +37,17 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	private static LocationManager location_manager = null;
 	private static ProgressDialog loading_dialog = null;
 	
+	private final Handler handler = new Handler(); 
+	private Thread locations_thread;
+	
+	final Runnable updateLocations = new Runnable() 
+	{
+		public void run() 
+		{
+			newLocationsAvailable();
+		}
+	};
+	
 	/**
 	 * onCreate
 	 * 
@@ -53,6 +66,8 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	
 		loading_dialog = ProgressDialog.show(this, "", "Acquiring GPS Location...", true);
 		setContentView(R.layout.nearby_places);
+		
+		locations_thread = new Thread(); // needed?
 		
 //		locations.clear();
 //		getMockLocations();
@@ -105,13 +120,47 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		
     	// get preferences for retrieving locations
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		locations.clear();
-		locations = Services.getInstance(this).getAllLocations(longitude, latitude, settings);
+
+		locations_thread = new Thread(new LocationThread(this, longitude, latitude, settings), "LocationThread");
+		locations_thread.start();
 		
-		if (locations.isEmpty())
+		//locations.clear();
+		//locations = Services.getInstance(this).getAllLocations(longitude, latitude, settings);
+		
+		//if (locations.isEmpty())
+			//Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
+		
+		//getMockLocations();
+		
+		// setup list for retrieved locations
+		//LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
+		//setListAdapter(adapter);
+		
+		// cancel loading dialog
+		//loading_dialog.cancel();
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    public void onProviderEnabled(String provider) {}
+    public void onProviderDisabled(String provider) {}
+	
+    public void newLocationsAvailable()
+    {
+    	Log.i(TAG, "received new location data.");
+    	try 
+    	{
+			locations_thread.join();
+		} catch (InterruptedException e) 
+		{
+			Log.i(TAG, "Thread interrupted already");
+		}
+ //   	locations.clear();
+  //  	locations = Services.getInstance(this).getLatestLocations();
+    	
+    	if (locations.isEmpty())
 			Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
-		
-		getMockLocations();
+    	
+    	getMockLocations();
 		
 		// setup list for retrieved locations
 		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
@@ -120,11 +169,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		// cancel loading dialog
 		loading_dialog.cancel();
     }
-
-    public void onStatusChanged(String provider, int status, Bundle extras) {}
-    public void onProviderEnabled(String provider) {}
-    public void onProviderDisabled(String provider) {}
-	
+    
 	/**
 	 * onCreateOptionsMenu
 	 * 
@@ -172,6 +217,30 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		Toast.makeText(this, "Location Name: " + location.getName() + 
 				"\n Longitude: " + location.getLongitude() + 
 				"\n Latitude: " + location.getLatitude(), Toast.LENGTH_LONG).show();
+	}
+	
+	
+	class LocationThread implements Runnable
+	{
+		Activity activity;
+		String longitude;
+		String latitude;
+		SharedPreferences settings;
+		
+		LocationThread(Activity activity, String longitude, String latitude, SharedPreferences settings)
+		{
+			this.activity = activity;
+			this.longitude = longitude;
+			this.latitude = latitude;
+			this.settings = settings;
+		}
+		
+		public void run() 
+		{
+			locations.clear();
+			locations = Services.getInstance(activity).getAllLocations(longitude, latitude, settings);
+			handler.post(updateLocations);
+		}
 	}
 	
 	private void getMockLocations()
