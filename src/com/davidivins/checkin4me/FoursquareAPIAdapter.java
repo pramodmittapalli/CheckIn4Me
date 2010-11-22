@@ -22,21 +22,6 @@ public class FoursquareAPIAdapter implements APIAdapter
 		this.config = config;
 		latest_locations = new ArrayList<Locale>();
 	}
-
-	/**
-	 * getLocations
-	 * 
-	 * @param String longitude
-	 * @param String latitude
-	 * @param SharedPreferences settings
-	 * @return ArrayList<Locale>
-	 */
-//	public ArrayList<Locale> getLocations(String longitude, String latitude, SharedPreferences settings)
-//	{
-//		ArrayList<Locale> locations = new ArrayList<Locale>();
-//		
-//		return locations;
-//	}
 	
 	/**
 	 * getLocationThread

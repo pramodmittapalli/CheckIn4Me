@@ -1,7 +1,6 @@
 package com.davidivins.checkin4me;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Properties;
 
 import android.content.SharedPreferences;

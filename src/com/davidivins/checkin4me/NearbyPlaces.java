@@ -40,6 +40,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	private final Handler handler = new Handler(); 
 	private Thread locations_thread;
 	
+	// acts as callback from thread
 	final Runnable updateLocations = new Runnable() 
 	{
 		public void run() 
@@ -66,15 +67,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	
 		loading_dialog = ProgressDialog.show(this, "", "Acquiring GPS Location...", true);
 		setContentView(R.layout.nearby_places);
-		
-		locations_thread = new Thread(); // needed?
-		
-//		locations.clear();
-//		getMockLocations();
-//		
-//		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
-//		setListAdapter(adapter);
-//		
+	
 		getListView().setTextFilterEnabled(true);
 		getListView().setOnItemClickListener(this);
 		getListView().setBackgroundColor(Color.WHITE);
@@ -123,21 +116,6 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 
 		locations_thread = new Thread(new LocationThread(this, longitude, latitude, settings), "LocationThread");
 		locations_thread.start();
-		
-		//locations.clear();
-		//locations = Services.getInstance(this).getAllLocations(longitude, latitude, settings);
-		
-		//if (locations.isEmpty())
-			//Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
-		
-		//getMockLocations();
-		
-		// setup list for retrieved locations
-		//LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
-		//setListAdapter(adapter);
-		
-		// cancel loading dialog
-		//loading_dialog.cancel();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {}
@@ -147,16 +125,18 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
     public void newLocationsAvailable()
     {
     	Log.i(TAG, "received new location data.");
+    	
+    	// join thread even though we know it already completed
     	try 
     	{
-			locations_thread.join();
-		} catch (InterruptedException e) 
+    		if (locations_thread != null)
+    			locations_thread.join();
+		} 
+    	catch (InterruptedException e) 
 		{
 			Log.i(TAG, "Thread interrupted already");
 		}
- //   	locations.clear();
-  //  	locations = Services.getInstance(this).getLatestLocations();
-    	
+
     	if (locations.isEmpty())
 			Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
     	
