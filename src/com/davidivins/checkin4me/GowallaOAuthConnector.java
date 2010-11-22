@@ -77,7 +77,7 @@ public class GowallaOAuthConnector implements OAuthConnector
 		String url = config.getProperty("oauth_host") + config.getProperty("oauth_new_token_endpoint")
 			+ "?client_id=" + config.getProperty("oauth_client_id")
 			+ "&redirect_uri=" + oauth_redirect_uri 
-			+ "&scope=" + config.getProperty("api_scope");
+			+ "&scope=" + config.getProperty("oauth_api_scope");
 		
 		Log.i(TAG, "authorization url = " + url);
 		return url;
@@ -124,6 +124,7 @@ public class GowallaOAuthConnector implements OAuthConnector
 	{
 		OAuthResponse response = new OAuthResponse();
 		Log.i(TAG, "code in settings = " + settings.getString("gowalla_code", "-1"));
+		
 		if (settings.getString("gowalla_code", "-1") != "-1")
 		{
 			GowallaOAuthRequest request = new GowallaOAuthRequest(
@@ -135,7 +136,7 @@ public class GowallaOAuthConnector implements OAuthConnector
 			request.addQueryParameter("client_secret", config.getProperty("oauth_client_secret"));
 			request.addQueryParameter("code", settings.getString("gowalla_code", "-1"));
 			request.addQueryParameter("redirect_uri", oauth_redirect_uri);
-			request.addQueryParameter("scope", config.getProperty("api_scope"));
+			request.addQueryParameter("scope", config.getProperty("oauth_api_scope"));
 			
 			response = (OAuthResponse)request.execute();
 		}

@@ -13,6 +13,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.util.Base64;
@@ -92,8 +93,18 @@ public class FoursquareOAuthRequest extends Request
 		{
 			// make background http request for temporary token
 			HttpClient   httpclient    = new DefaultHttpClient();
-	    	HttpGet      httpget       = new HttpGet(url_string);
-	    	HttpResponse http_response = httpclient.execute(httpget);
+			HttpResponse http_response;
+			
+			if (method.equals("GET"))
+			{
+				HttpGet httpget = new HttpGet(url_string);
+				http_response = httpclient.execute(httpget);
+			}
+			else
+			{
+				HttpPost httppost = new HttpPost(url_string);
+				http_response = httpclient.execute(httppost);
+			}
 	    	
 	    	// get content of request
 	    	page = new BufferedReader(new InputStreamReader(

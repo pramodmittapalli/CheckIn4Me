@@ -3,6 +3,8 @@ package com.davidivins.checkin4me;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,25 +15,28 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import android.util.Log;
 
 /**
- * GowallaOAuthRequest
+ * HTTPRequest
  * 
  * @author david
  */
-public class GowallaOAuthRequest extends Request 
+public class HTTPRequest extends Request 
 {
-	private static final String TAG               = "GowallaOAuthRequest";
+	private static final String TAG               = "HTTPRequest";
 	private static final String RESPONSE_ENCODING = "UTF-8";
-		
+	
+	private HashMap<String, String> headers;
+	
 	/**
-	 * FoursquareOAuthRequest
+	 * HTTPRequest
 	 * 
 	 * @param method
 	 * @param host
 	 * @param endpoint
 	 */
-	public GowallaOAuthRequest(String method, String host, String endpoint)
+	public HTTPRequest(String method, String host, String endpoint)
 	{
 		super(method, host, endpoint);
+		headers = new HashMap<String, String>();
 	}
 
 	/**
@@ -45,7 +50,7 @@ public class GowallaOAuthRequest extends Request
 		BufferedReader page = null;
 		OAuthResponse response = new OAuthResponse();
 
-		Log.i(TAG, "executing Gowalla OAuth request...");
+		Log.i(TAG, "executing HTTP request...");
 		
 		// make request
 		String url_string  = generateURL();
@@ -55,17 +60,32 @@ public class GowallaOAuthRequest extends Request
 		try
 		{
 			// make background http request for temporary token
-			HttpClient   httpclient    = new DefaultHttpClient();
+			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse http_response;
 			
+			// get request
 			if (method.equals("GET"))
 			{
 				HttpGet httpget = new HttpGet(url_string);
+				
+				Set<String> keys = headers.keySet();
+				for (String key : keys)
+				{
+					httpget.addHeader(key, headers.get(key));
+				}
+				
 				http_response = httpclient.execute(httpget);
 			}
-			else
+			else // post request
 			{
 				HttpPost httppost = new HttpPost(url_string);
+				
+				Set<String> keys = headers.keySet();
+				for (String key : keys)
+				{
+					httppost.addHeader(key, headers.get(key));
+				}
+				
 				http_response = httpclient.execute(httppost);
 			}
 
@@ -77,7 +97,7 @@ public class GowallaOAuthRequest extends Request
 	    	String line;
 	    	while ((line = page.readLine()) != null)
 	    	{
-	    		Log.i(TAG, "line = " + line);
+	    		//Log.i(TAG, "line = " + line);
 	    		response.appendResponseString(line);
 	    	}
 
@@ -102,6 +122,17 @@ public class GowallaOAuthRequest extends Request
 	private String generateURL()
 	{
 		return host + endpoint + "?" + getURIQueryParametersAsString();
+	}
+	
+	/**
+	 * addHeader
+	 * 
+	 * @param String key
+	 * @param String value
+	 */
+	public void addHeader(String key, String value)
+	{
+		headers.put(key, value);
 	}
 }
 
