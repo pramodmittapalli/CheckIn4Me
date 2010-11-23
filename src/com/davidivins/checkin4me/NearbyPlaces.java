@@ -139,8 +139,10 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 
     	if (locations.isEmpty())
 			Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
+    	else
+    		Log.i(TAG, "WE HAVE LOCATIONS!!");
     	
-    	getMockLocations();
+    	//getMockLocations();
 		
 		// setup list for retrieved locations
 		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);

@@ -3,6 +3,10 @@ package com.davidivins.checkin4me;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -11,13 +15,16 @@ public class GowallaAPIAdapter implements APIAdapter
 	private static final String TAG = "GowallaAPIAdapter";
 	private Properties config;
 	private ArrayList<Locale> latest_locations;
+	private int service_id;
 	
 	/**
 	 * GowallaAPIAdapter
 	 */
-	public GowallaAPIAdapter(Properties config)
+	public GowallaAPIAdapter(Properties config, int service_id)
 	{
+		Log.i(TAG, "service_id = " + service_id);
 		this.config = config;
+		this.service_id = service_id;
 		latest_locations = new ArrayList<Locale>();
 	}
 	
@@ -96,12 +103,42 @@ public class GowallaAPIAdapter implements APIAdapter
 		 * setLocationsFromJson
 		 * 
 		 * @param json
+		 * @throws JSONException 
 		 */
-		private void setLocationsFromJson(String json)
+		private void setLocationsFromJson(String json_string)
 		{
+			// clear locations
 			latest_locations.clear();
 			
-			// store locations here
+			try 
+			{
+				JSONObject json = new JSONObject(json_string);
+				JSONArray spots = json.getJSONArray("spots");
+				
+				for (int i = 0; i < spots.length(); i++)
+				{
+					JSONObject spot = spots.getJSONObject(i);
+					
+					String name = spot.getString("name");
+					String description = spot.getString("description");
+					String checkins_url = spot.getString("checkins_url");
+					String longitude = spot.getString("lng");
+					String latitude = spot.getString("lat");
+					
+					String[] temp = checkins_url.split("\\?");
+					String[] spot_id_key_value = temp[1].split("\\=");
+					String spot_id = spot_id_key_value[1];
+					
+					Locale location = new Locale(name, description, longitude, latitude);
+					location.mapServiceIdToLocationId(service_id, spot_id);
+					latest_locations.add(location);
+				}
+			} 
+			catch (JSONException e) 
+			{
+				Log.e(TAG, "JSON Exception: " + e.getMessage());
+				Log.e(TAG, "Could not parse json response: " + json_string);
+			}
 		}
 	}
 }

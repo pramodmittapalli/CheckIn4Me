@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.Random;
+import java.util.Set;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -43,6 +44,7 @@ public class FoursquareOAuthRequest extends Request
 	{
 		super(method, host, endpoint);
 		this.signing_key = signing_key;
+		Log.i(TAG, "signing_key = " + signing_key);
 	}
 	
 	/**
@@ -98,11 +100,25 @@ public class FoursquareOAuthRequest extends Request
 			if (method.equals("GET"))
 			{
 				HttpGet httpget = new HttpGet(url_string);
+				
+				Set<String> keys = headers.keySet();
+				for (String key : keys)
+				{
+					httpget.addHeader(key, headers.get(key));
+				}
+				
 				http_response = httpclient.execute(httpget);
 			}
 			else
 			{
 				HttpPost httppost = new HttpPost(url_string);
+				
+				Set<String> keys = headers.keySet();
+				for (String key : keys)
+				{
+					httppost.addHeader(key, headers.get(key));
+				}
+				
 				http_response = httpclient.execute(httppost);
 			}
 	    	

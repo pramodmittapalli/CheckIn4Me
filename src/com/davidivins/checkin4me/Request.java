@@ -1,5 +1,6 @@
 package com.davidivins.checkin4me;
 
+import java.util.HashMap;
 import java.util.TreeMap;
 import android.util.Log;
 
@@ -16,6 +17,7 @@ abstract public class Request
 	protected String method;
 	protected String host;
 	protected String endpoint;
+	protected HashMap<String, String> headers;
 	protected TreeMap<String, String> query_parameters;
 	
 	/**
@@ -26,7 +28,8 @@ abstract public class Request
 		method = "";
 		host = "";
 		endpoint = "";
-		query_parameters = new TreeMap<String, String>();	
+		headers = new HashMap<String, String>();
+		query_parameters = new TreeMap<String, String>();
 	}
 	
 	/**
@@ -41,6 +44,7 @@ abstract public class Request
 		this.method = method;
 		this.host = host;
 		this.endpoint = endpoint;
+		headers = new HashMap<String, String>();
 		query_parameters = new TreeMap<String, String>();	
 	}
 	
@@ -94,6 +98,17 @@ abstract public class Request
 	public void setEndpoint(String endpoint)
 	{
 		this.endpoint = endpoint;
+	}
+	
+	/**
+	 * addHeader
+	 * 
+	 * @param String key
+	 * @param String value
+	 */
+	public void addHeader(String key, String value)
+	{
+		headers.put(key, value);
 	}
 	
 	/**

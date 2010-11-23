@@ -1,6 +1,8 @@
 package com.davidivins.checkin4me;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -27,10 +29,12 @@ public class Services
 	 */
 	private Services(Resources resources)
 	{
+		int service_count = 0;
+		
 		services = new ArrayList<Service>();
-		services.add(new FoursquareService(resources));
-		services.add(new GowallaService(resources));
-		services.add(new BrightkiteService(resources));	
+		services.add(new FoursquareService(resources, service_count++));
+		services.add(new GowallaService(resources, service_count++));
+		services.add(new BrightkiteService(resources, service_count++));	
 	}
 	
 	/**
@@ -167,6 +171,8 @@ public class Services
 		
 		// merge locations
 		ArrayList<Locale> locations = mergeLocations(location_lists);
+		Collections.sort(locations, new LocaleNameComparator());
+		Collections.sort(locations, new LocaleServicesTotalComparator());
 		return locations;
 	}
 	

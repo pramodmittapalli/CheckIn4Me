@@ -20,14 +20,17 @@ public class FoursquareService implements Service
 	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
 	private APIAdapter api_adapter;
+	private int service_id;
 	
 	/**
 	 * FoursquareService
 	 * 
 	 * @param resources
 	 */
-	public FoursquareService(Resources resources)
+	public FoursquareService(Resources resources, int service_id)
 	{
+		this.service_id = service_id;
+		
 		config = new Properties();
 		logo = new FoursquareLogo("servicelogo", R.drawable.foursquare_logo_resized, R.id.servicelogo);
 		
@@ -38,7 +41,7 @@ public class FoursquareService implements Service
 			
 			// create oauth connector with current configuration
 			oauth_connector =  new FoursquareOAuthConnector(config);
-			api_adapter = new FoursquareAPIAdapter(config);
+			api_adapter = new FoursquareAPIAdapter(config, service_id);
 		} 
 		catch (Exception e) 
 		{

@@ -19,14 +19,17 @@ public class GowallaService implements Service
 	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
 	private APIAdapter api_adapter;
+	private int service_id;
 	
 	/**
 	 * GowallaService
 	 * 
 	 * @param resources
 	 */
-	public GowallaService(Resources resources)
+	public GowallaService(Resources resources, int service_id)
 	{
+		this.service_id = service_id;
+		
 		config = new Properties();
 		logo = new FoursquareLogo("servicelogo", R.drawable.gowalla_logo_resized, R.id.servicelogo);
 		
@@ -36,7 +39,7 @@ public class GowallaService implements Service
 			config.load(config_file);
 			
 			oauth_connector = new GowallaOAuthConnector(config);
-			api_adapter = new GowallaAPIAdapter(config);
+			api_adapter = new GowallaAPIAdapter(config, service_id);
 		} 
 		catch (Exception e) 
 		{

@@ -24,8 +24,6 @@ public class HTTPRequest extends Request
 	private static final String TAG               = "HTTPRequest";
 	private static final String RESPONSE_ENCODING = "UTF-8";
 	
-	private HashMap<String, String> headers;
-	
 	/**
 	 * HTTPRequest
 	 * 
@@ -36,7 +34,6 @@ public class HTTPRequest extends Request
 	public HTTPRequest(String method, String host, String endpoint)
 	{
 		super(method, host, endpoint);
-		headers = new HashMap<String, String>();
 	}
 
 	/**
@@ -97,7 +94,7 @@ public class HTTPRequest extends Request
 	    	String line;
 	    	while ((line = page.readLine()) != null)
 	    	{
-	    		//Log.i(TAG, "line = " + line);
+	    		Log.i(TAG, "line = " + line);
 	    		response.appendResponseString(line);
 	    	}
 
@@ -122,17 +119,6 @@ public class HTTPRequest extends Request
 	private String generateURL()
 	{
 		return host + endpoint + "?" + getURIQueryParametersAsString();
-	}
-	
-	/**
-	 * addHeader
-	 * 
-	 * @param String key
-	 * @param String value
-	 */
-	public void addHeader(String key, String value)
-	{
-		headers.put(key, value);
 	}
 }
 

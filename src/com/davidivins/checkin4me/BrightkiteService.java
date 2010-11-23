@@ -17,14 +17,17 @@ public class BrightkiteService implements Service
 	private static final String TAG = "BrightkiteService";
 	private Properties config;
 	private DrawableListItem logo;
+	private int service_id;
 	
 	/**
 	 * BrightkiteService
 	 * 
 	 * @param resources
 	 */
-	public BrightkiteService(Resources resources)
+	public BrightkiteService(Resources resources, int service_id)
 	{
+		this.service_id = service_id;
+		
 		config = new Properties();
 		logo = new FoursquareLogo("servicelogo", R.drawable.brightkite_logo_resized, R.id.servicelogo);
 		
