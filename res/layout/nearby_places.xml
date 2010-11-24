@@ -15,5 +15,4 @@
 		android:background="@color/white"
 		android:text="@string/no_nearby_places_msg" 
 		android:textColor="@color/black" />
-		<!-- android:textColor="@color/black" -->
 </LinearLayout>

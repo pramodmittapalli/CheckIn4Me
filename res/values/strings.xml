@@ -5,6 +5,7 @@
     <string name="service_connection_title">Connect Services</string>
  	<string name="authorization_title">Authorization</string>
 	<string name="nearby_places_title">Nearby Places</string>
+	<string name="location_details_title">Location Details</string>
     
     <string name="menu_option_connect">Connect More Services</string>
 	<string name="menu_option_nearby">Nearby Places</string>
