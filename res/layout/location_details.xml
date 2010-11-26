@@ -33,15 +33,11 @@
 			android:paddingRight="5dp"
 			android:paddingBottom="5dp"/>
 
-		<com.google.android.maps.MapView
-			xmlns:android="http://schemas.android.com/apk/res/android"
+		<LinearLayout 
 			android:id="@+id/location_map"
 			android:layout_width="fill_parent"
 			android:layout_height="100dp"
-			android:clickable="true"
-			android:padding="5dp"
-			android:layout_weight="3"
-			android:apiKey="0uorhLKAi0FPwbHq3ZheCJNY8YjF5OHuLVcqeDQ" />
+			android:layout_weight="3" />
 		
 		<ListView android:id="@+id/location_service_list"
 			android:layout_width="fill_parent"

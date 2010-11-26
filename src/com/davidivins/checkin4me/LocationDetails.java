@@ -1,8 +1,10 @@
 package com.davidivins.checkin4me;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import com.google.android.maps.GeoPoint;
@@ -43,6 +45,8 @@ import android.widget.Toast;
 public class LocationDetails extends MapActivity implements OnClickListener, DialogInterface.OnClickListener
 {
 	private static final String TAG = "LocationDetails";
+	private static Properties config = null;
+	
 	Locale current_location = new Locale();
 	HashMap<Integer, Boolean> checkin_statuses = new HashMap<Integer, Boolean>();
 	private static ProgressDialog checking_in_dialog = null;
@@ -70,6 +74,22 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.location_details);
 		
+		// get map config file if necessary
+		if (config == null)
+		{
+			config = new Properties();
+		
+			try 
+			{
+				InputStream config_file = getResources().openRawResource(R.raw.google_maps);
+				config.load(config_file);
+			} 
+			catch (Exception e) 
+			{
+				Log.e(TAG, "Failed to open config file");
+			}
+		}
+		
 		// load current location from preferences
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		current_location.load(settings);
@@ -90,7 +110,9 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		//
 		// map stuff
 		//
-		MapView location_map = (MapView) findViewById(R.id.location_map);
+		MapView location_map = new MapView(this, config.getProperty("api_key"));
+		location_map.setClickable(true);
+		
 		List<Overlay> map_overlays = location_map.getOverlays();
 		Drawable drawable = this.getResources().getDrawable(android.R.drawable.star_on);
 		
@@ -112,6 +134,9 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		MapController map_controller = location_map.getController();
 		map_controller.setCenter(location_point);
 		map_controller.setZoom(15);
+		
+		LinearLayout map_layout = (LinearLayout)findViewById(R.id.location_map);
+		map_layout.addView(location_map);
 		
 		//
 		// list stuff

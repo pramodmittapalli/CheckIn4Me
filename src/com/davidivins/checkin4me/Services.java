@@ -179,9 +179,11 @@ public class Services
 		// get location request threads
 		for (Service service : services)
 		{
-			Log.i(TAG, "Starting thread for service " + service.getName());
 			if (service.connected(settings))
-				threads.add(new Thread(service.getAPIAdapter().getLocationThread(longitude, latitude, settings), service.getName()));			
+			{
+				Log.i(TAG, "Creating thread for service " + service.getName());
+				threads.add(new Thread(service.getAPIAdapter().getLocationThread(longitude, latitude, settings), service.getName()));
+			}
 		}
 		
 		// start threads
