@@ -195,27 +195,65 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 	 */
 	public void displayCheckInStatus(HashMap<Integer, Boolean> checkin_statuses)
 	{
+		boolean some_succeeded = false;
+		boolean some_failed = false;
+		
 		// retrieve layout inflater
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
 		View layout = inflater.inflate(R.layout.checkin_dialog, (ViewGroup)findViewById(R.id.checkin_root));
+		LinearLayout checkin_root_dialog = (LinearLayout)layout.findViewById(R.id.checkin_root);
 
-		// set text for layout
-		TextView text = (TextView) layout.findViewById(R.id.checkin_text);
-		text.setText("We have you at " + current_location.getName() + " on:");
-		
 		// add service icons to layout
-		LinearLayout images = (LinearLayout)layout.findViewById(R.id.service_checkin_icons);
+		LinearLayout successful_images = new LinearLayout(this);
+		LinearLayout failure_images = new LinearLayout(this);
+		
+		// center icons
+		successful_images.setGravity(0x11);
+		failure_images.setGravity(0x11);
+		
+		// get icons for successful and failed check-ins
 		Set<Integer> keys = checkin_statuses.keySet();
 		for (int key : keys)
 		{
+			ImageView image = new ImageView(this);
+			image.setImageResource(Services.getInstance(this).getServiceById(key).getIconDrawable());
+			image.setPadding(0, 5, 5, 0);
+			
 			// if the check-in for this particular service was successful
 			if (checkin_statuses.get(key))
 			{
-				ImageView image = new ImageView(this);
-				image.setImageResource(Services.getInstance(this).getServiceById(key).getIconDrawable());
-				image.setPadding(0, 5, 5, 0);
-				images.addView(image);
+				successful_images.addView(image);
+				some_succeeded= true;
 			}
+			else
+			{
+				failure_images.addView(image);
+				some_failed = true;
+			}
+		}
+		
+		// successful checkins
+		if (some_succeeded)
+		{
+			TextView successful_text = new TextView(this);
+			successful_text.setText("We have you at " + current_location.getName() + " on:");
+			successful_text.setGravity(0x11); // center text
+			checkin_root_dialog.addView(successful_text);
+			checkin_root_dialog.addView(successful_images);
+		}
+		
+		// failed check-ins
+		if (some_failed)
+		{
+			TextView failure_text = new TextView(this);
+			failure_text.setText("Check-in failed at " + current_location.getName() + " on:");
+			failure_text.setGravity(0x11); // center text
+
+			if (some_succeeded) // spread them out
+				failure_text.setPadding(0, 10, 0, 0);
+			
+			checkin_root_dialog.addView(failure_text);
+			checkin_root_dialog.addView(failure_images);
 		}
 
 		// create alert dialog builder
@@ -225,8 +263,25 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		
 		// create alert dialog
 		AlertDialog alertDialog = builder.create();
-		alertDialog.setIcon(R.drawable.check);
-		alertDialog.setTitle("Check-in Successful!");
+		
+		// set title/icon based on success or failure
+		if (some_succeeded && some_failed) // some check-ins failed and some check-ins succeeded
+		{
+			alertDialog.setIcon(R.drawable.warning);
+			alertDialog.setTitle("Check-in Results Mixed!");
+		}
+		else if (some_failed) // all check-ins failed
+		{
+			alertDialog.setIcon(R.drawable.x);
+			alertDialog.setTitle("Check-in Failed!");
+		}
+		else // all check-ins succeeded
+		{
+			alertDialog.setIcon(R.drawable.check);
+			alertDialog.setTitle("Check-in Successful!");
+		}
+		
+		// show check-in dialog box
 		alertDialog.show(); 
 	}
 
@@ -276,11 +331,6 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		if (null != checking_in_dialog && checking_in_dialog.isShowing())
 			checking_in_dialog.cancel();
 		
-		// mock return statuses
-//		checkin_statuses.clear();
-//		checkin_statuses.put(0, true);
-//		checkin_statuses.put(1, true);
-		
 		// display check in dialog
 		displayCheckInStatus(checkin_statuses);
 	}
@@ -318,7 +368,13 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		public void run() 
 		{
 			checkin_statuses.clear();
+			
+			// mock return statuses
+//			checkin_statuses.put(0, false);
+//			checkin_statuses.put(1, true);
+			
 			checkin_statuses = Services.getInstance(activity).checkIn(service_ids, location, settings);
+			
 			handler.post(processCheckIn);
 		}
 	}
