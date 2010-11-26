@@ -1,6 +1,12 @@
 package com.davidivins.checkin4me;
 
 import java.util.HashMap;
+import java.util.Set;
+
+import com.google.android.maps.GeoPoint;
+
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 /**
  * Location
@@ -15,7 +21,12 @@ public class Locale
 	private String longitude;
 	private String latitude;
 	
-	HashMap<Integer, String> service_spot_ids;
+	private String address;
+	private String city;
+	private String state;
+	private String zip;
+	
+	HashMap<Integer, String> service_location_ids;
 	
 	/**
 	 * Location
@@ -28,7 +39,12 @@ public class Locale
 		longitude = "0.0";
 		latitude = "0.0";
 		
-		service_spot_ids = new HashMap<Integer, String>();
+		address = "";
+		city = "";
+		state = "";
+		zip = "";
+		
+		service_location_ids = new HashMap<Integer, String>();
 	}
 	
 	/**
@@ -39,14 +55,20 @@ public class Locale
 	 * @param longitude
 	 * @param latitude
 	 */
-	public Locale(String name, String description, String longitude, String latitude)
+	public Locale(String name, String description, String longitude, String latitude,
+			String address, String city, String state, String zip)
 	{
 		this.name = name;
 		this.description = description;
 		this.longitude = longitude;
 		this.latitude = latitude;
 		
-		service_spot_ids = new HashMap<Integer, String>();
+		this.address = address;
+		this.city = city;
+		this.state = state;
+		this.zip = zip;
+		
+		service_location_ids = new HashMap<Integer, String>();
 	}
 	
 	/**
@@ -70,6 +92,16 @@ public class Locale
 	}
 	
 	/**
+	 * setDescription
+	 * 
+	 * @param String description
+	 */
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+	
+	/**
 	 * getLongitude
 	 * 
 	 * @return String
@@ -90,6 +122,42 @@ public class Locale
 	}
 	
 	/**
+	 * getAddress
+	 * 
+	 * @return String
+	 */
+	public String getAddress()
+	{
+		String out_address = "";
+		
+		if (!address.equals(""))
+			out_address += address;
+		
+		if (!city.equals(""))
+			out_address += ". " + city;
+		
+		if (!state.equals(""))
+			out_address += ", " + state;
+
+		if (!zip.equals(""))
+			out_address += " " + zip;
+
+		return out_address;
+	}
+	
+	/**
+	 * getCoordinatesAsGeoPoint
+	 * 
+	 * @return GeoPoint
+	 */
+	public GeoPoint getCoordinatesAsGeoPoint()
+	{
+		Double longitude = new Double(this.longitude);
+		Double latitude = new Double(this.latitude);
+		return new GeoPoint((int)(latitude * 1E6), (int)(longitude * 1E6));
+	}
+	
+	/**
 	 * mapServiceIdToLocationId
 	 * 
 	 * @param Integer service_id
@@ -97,7 +165,7 @@ public class Locale
 	 */
 	public void mapServiceIdToLocationId(int service_id, String location_id)
 	{
-		service_spot_ids.put(service_id, location_id);
+		service_location_ids.put(service_id, location_id);
 	}
 	
 	/**
@@ -107,8 +175,71 @@ public class Locale
 	 */
 	public HashMap<Integer, String> getServiceIdToLocationIdMap()
 	{
-		return service_spot_ids;
-	}	
+		return service_location_ids;
+	}
+	
+	/**
+	 * store
+	 * 
+	 * @param Editor settings_editor
+	 */
+	public void store(Editor settings_editor)
+	{		
+		settings_editor.putString("current_location_name", name);
+		settings_editor.putString("current_location_description", description);
+		settings_editor.putString("current_location_longitude", longitude);
+		settings_editor.putString("current_location_latitude", latitude);
+		
+		settings_editor.putString("current_location_address", address);
+		settings_editor.putString("current_location_city", city);
+		settings_editor.putString("current_location_state", state);
+		settings_editor.putString("current_location_zip", zip);
+		
+		Set<Integer> keys = service_location_ids.keySet();
+		int count = 0;
+		
+		for (Integer key : keys)
+		{
+			String value = service_location_ids.get(key);
+			settings_editor.putString("current_location_xref_key_" + count, key.toString());
+			settings_editor.putString("current_location_xref_value_" + count, value);
+			count++;
+		}
+		
+		settings_editor.commit();
+	}
+	
+	/**
+	 * load
+	 * 
+	 * @param SharedPreferences settings
+	 */
+	public void load(SharedPreferences settings)
+	{
+		name = settings.getString("current_location_name", "");
+		description = settings.getString("current_location_description", "");
+		longitude = settings.getString("current_location_longitude", "");
+		latitude = settings.getString("current_location_latitude", "");
+		
+		address = settings.getString("current_location_address", "");
+		city = settings.getString("current_location_city", "");
+		state = settings.getString("current_location_state", "");
+		zip = settings.getString("current_location_zip", "");
+		
+		for (int i = 0; i != -1; i++) // <---  i know... :(
+		{
+			String key_string = settings.getString("current_location_xref_key_" + i, "");
+			String value = settings.getString("current_location_xref_value_" + i, "");
+			
+			if (!key_string.equals("") && !value.equals(""))
+			{
+				Integer key = new Integer(key_string);
+				service_location_ids.put(key, value);
+			}
+			else
+				break;
+		}
+	}
 }
 
 //

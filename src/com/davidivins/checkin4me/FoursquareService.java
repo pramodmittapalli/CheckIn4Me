@@ -49,6 +49,16 @@ public class FoursquareService implements Service
 		}
 		
 	}
+	
+	/**
+	 * getId
+	 * 
+	 * @return int id
+	 */
+	public int getId()
+	{
+		return service_id;
+	}
 
 	/**
 	 * getName

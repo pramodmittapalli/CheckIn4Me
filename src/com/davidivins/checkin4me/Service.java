@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
  */
 public interface Service
 {
+	abstract public int getId();
 	abstract public String getName();
 	abstract public DrawableListItem getLogo();
 	abstract public int getIconDrawable();

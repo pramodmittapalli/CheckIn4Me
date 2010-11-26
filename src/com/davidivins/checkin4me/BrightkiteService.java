@@ -41,6 +41,16 @@ public class BrightkiteService implements Service
 			Log.e(TAG, "Failed to open config file");
 		}
 	}
+	
+	/**
+	 * getId
+	 * 
+	 * @return int id
+	 */
+	public int getId()
+	{
+		return service_id;
+	}
 
 	/**
 	 * getName

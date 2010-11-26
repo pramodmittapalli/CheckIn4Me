@@ -2,7 +2,6 @@ package com.davidivins.checkin4me;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -73,6 +72,24 @@ public class Services
 	}
 	
 	/**
+	 * getConnectedServicesAsArrayList
+	 * 
+	 * @param SharedPreferences settings
+	 * @return ArrayList<Service>
+	 */
+	public ArrayList<Service> getConnectedServicesAsArrayList(SharedPreferences settings)
+	{
+		ArrayList<Service> connected_services = new ArrayList<Service>();
+		
+		for (Service service : services)
+		{
+			if (service.connected(settings))
+				connected_services.add(service);
+		}
+		return connected_services;
+	}
+	
+	/**
 	 * getLogoKeys
 	 * 
 	 * @return String[]
@@ -121,6 +138,29 @@ public class Services
 		}
 		
 		return ids;
+	}
+	
+	
+	/**
+	 * atLeastOneConnected
+	 * 
+	 * @param prefs
+	 * @return boolean
+	 */
+	public boolean atLeastOneConnected(SharedPreferences prefs)
+	{
+		boolean result = false;
+		
+		for (Service service : services)
+		{
+			if (service.connected(prefs))
+			{
+				result = true;
+				break;
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -211,6 +251,10 @@ public class Services
 					if (existing_location.getName().equals(incoming_location.getName()))
 					{
 						merged = true;
+						
+						// store description if it exists
+						existing_location.setDescription(incoming_location.getDescription());
+						
 						HashMap<Integer, String> mappings = incoming_location.getServiceIdToLocationIdMap();
 						Set<Integer> keys = mappings.keySet();
 						
@@ -230,25 +274,56 @@ public class Services
 		return locations;
 	}
 	
-	/**
-	 * atLeastOneConnected
-	 * 
-	 * @param prefs
-	 * @return boolean
-	 */
-	public boolean atLeastOneConnected(SharedPreferences prefs)
-	{
-		boolean result = false;
-		
-		for (Service service : services)
-		{
-			if (service.connected(prefs))
-			{
-				result = true;
-				break;
-			}
-		}
-		
-		return result;
-	}
+//	/**
+//	 * checkIn
+//	 * 
+//	 * @param Locale location
+//	 * @param long[] checked_box_ids
+//	 * @return ??
+//	 */
+//	public boolean checkIn(Locale location, SharedPreferences settings)
+//	{
+//		ArrayList<Thread> threads = new ArrayList<Thread>();
+//		ArrayList<ArrayList<Locale>> location_lists = new ArrayList<ArrayList<Locale>>();
+//		
+//		// get location request threads
+//		for (Service service : services)
+//		{
+//			Log.i(TAG, "Starting thread for service " + service.getName());
+//			if (service.connected(settings))
+//				threads.add(new Thread(service.getAPIAdapter().getLocationThread(longitude, latitude, settings), service.getName()));			
+//		}
+//		
+//		// start threads
+//		for (Thread thread : threads)
+//		{
+//			thread.start();
+//		}
+//		
+//		// join threads
+//		for (Thread thread : threads)
+//		{
+//			try
+//			{
+//				thread.join();
+//			}
+//			catch (InterruptedException e)
+//			{
+//				Log.i(TAG, thread.getName() + " thread is interrupted already");
+//			}
+//		}
+//		
+//		// get latest locations
+//		for (Service service : services)
+//		{
+//			if (service.connected(settings))
+//				location_lists.add(service.getAPIAdapter().getLatestLocations());
+//		}
+//		
+//		// merge locations
+//		ArrayList<Locale> locations = mergeLocations(location_lists);
+//		Collections.sort(locations, new LocaleNameComparator());
+//		Collections.sort(locations, new LocaleServicesTotalComparator());
+//		return locations;
+//	}
 }

@@ -49,7 +49,7 @@
 			android:layout_height="wrap_content" />
 	</LinearLayout>
 
-    <Button android:id="@+id/button"
+    <Button android:id="@+id/check_in_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
 			android:padding="10dp"

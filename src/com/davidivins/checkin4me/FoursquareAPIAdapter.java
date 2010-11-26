@@ -7,8 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.davidivins.checkin4me.GowallaAPIAdapter.LocationThread;
-
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -150,8 +148,13 @@ public class FoursquareAPIAdapter implements APIAdapter
 							String description = "";
 							String longitude = venue.getString("geolong");
 							String latitude = venue.getString("geolat");
+							String address = venue.getString("address");
+							String city = venue.getString("city");
+							String state = venue.getString("state");
+							String zip = "";
 							
-							Locale location = new Locale(name, description, longitude, latitude);
+							Locale location = new Locale(name, description, longitude, latitude,
+									address, city, state, zip);
 							location.mapServiceIdToLocationId(service_id, venue_id);
 							latest_locations.add(location);	
 						}

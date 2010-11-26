@@ -125,11 +125,19 @@ public class GowallaAPIAdapter implements APIAdapter
 					String longitude = spot.getString("lng");
 					String latitude = spot.getString("lat");
 					
+					JSONObject addr = spot.getJSONObject("address");
+					String city = addr.getString("locality");
+					String state = addr.getString("region");
+					
+					String address = "";
+					String zip = "";
+					
 					String[] temp = checkins_url.split("\\?");
 					String[] spot_id_key_value = temp[1].split("\\=");
 					String spot_id = spot_id_key_value[1];
 					
-					Locale location = new Locale(name, description, longitude, latitude);
+					Locale location = new Locale(name, description, longitude, latitude, 
+							address, city, state, zip);
 					location.mapServiceIdToLocationId(service_id, spot_id);
 					latest_locations.add(location);
 				}
