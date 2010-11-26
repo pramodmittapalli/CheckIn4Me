@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,6 @@ class ServiceCheckListAdapter extends ArrayAdapter<Service> implements OnChecked
 	private Context context;
 	private int row_resource_id;
 	private ArrayList<Service> items;
-	private SharedPreferences settings;
 	
 	private static HashMap<Integer, Boolean> services_checked = new HashMap<Integer, Boolean>();
 
@@ -40,13 +38,12 @@ class ServiceCheckListAdapter extends ArrayAdapter<Service> implements OnChecked
 	 * @param row_resource_id
 	 * @param items
 	 */
-	public ServiceCheckListAdapter(Context context, int row_resource_id, ArrayList<Service> items, SharedPreferences settings) 
+	public ServiceCheckListAdapter(Context context, int row_resource_id, ArrayList<Service> items) 
 	{
 		super(context, row_resource_id, items);
 		this.context = context;
 		this.row_resource_id = row_resource_id;
 		this.items = items;
-		this.settings = settings;
 		
 		for(Service service : items)
 		{

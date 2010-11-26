@@ -12,6 +12,8 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -19,31 +21,39 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-public class LocationDetails extends MapActivity implements OnClickListener
+/**
+ * LocationDetails
+ * 
+ * @author david
+ */
+public class LocationDetails extends MapActivity implements OnClickListener, DialogInterface.OnClickListener
 {
 	private static final String TAG = "LocationDetails";
+	Locale current_location = new Locale();
 	
-	/** Called when the activity is first created. */
+	/**
+	 * onCreate
+	 * 
+	 * @param saved_instance_state
+	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle saved_instance_state)
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate(saved_instance_state);
 		setContentView(R.layout.location_details);
 		
 		// load current location from preferences
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Locale current_location = new Locale();
 		current_location.load(settings);
 		
 		// load current longitude and latitude from preferences
@@ -92,27 +102,17 @@ public class LocationDetails extends MapActivity implements OnClickListener
 		list_view.setTextFilterEnabled(true);
 		list_view.setBackgroundColor(Color.WHITE);
 		list_view.setCacheColorHint(Color.WHITE);
+
+		// add services to list
+		ArrayList<Service> services = Services.getInstance(this).getConnectedServicesAsArrayList(settings);
+		ServiceCheckListAdapter adapter = new ServiceCheckListAdapter(this, R.layout.location_details_row, services);
+		list_view.setAdapter(adapter);
 		
 		// 
 		// button stuff
 		//
 		Button button = (Button)findViewById(R.id.check_in_button);
 		button.setOnClickListener(this);
-		
-		ArrayList<Service> services = Services.getInstance(this).getConnectedServicesAsArrayList(settings);
-		ServiceCheckListAdapter adapter = new ServiceCheckListAdapter(this, R.layout.location_details_row, services, settings);
-		list_view.setAdapter(adapter);
-	}
-	
-	/**
-	 * isRouteDisplayed
-	 * 
-	 * @return boolean
-	 */
-	@Override
-	protected boolean isRouteDisplayed() 
-	{
-		return false;
 	}
 
 	/**
@@ -132,5 +132,77 @@ public class LocationDetails extends MapActivity implements OnClickListener
 		{
 			Log.i(TAG, "service connected id = " + key + " and checked state = " + services_checked.get(key));
 		}
+		
+		
+		HashMap<Integer, Boolean> checkin_statuses = new HashMap<Integer, Boolean>();
+		checkin_statuses.put(0, true);
+		checkin_statuses.put(1, true);
+		displayCheckInStatus(checkin_statuses);
+	}
+	
+	/**
+	 * displayCheckInStatus
+	 * 
+	 * @param HashMap<Integer, Boolean> checkin_statuses
+	 */
+	public void displayCheckInStatus(HashMap<Integer, Boolean> checkin_statuses)
+	{
+		// retrieve layout inflater
+		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View layout = inflater.inflate(R.layout.checkin_dialog, (ViewGroup)findViewById(R.id.checkin_root));
+
+		// set text for layout
+		TextView text = (TextView) layout.findViewById(R.id.checkin_text);
+		text.setText("We have you at " + current_location.getName() + " on:");
+		
+		// add service icons to layout
+		LinearLayout images = (LinearLayout)layout.findViewById(R.id.service_checkin_icons);
+		Set<Integer> keys = checkin_statuses.keySet();
+		for (int key : keys)
+		{
+			// if the check-in for this particular service was successful
+			if (checkin_statuses.get(key))
+			{
+				ImageView image = new ImageView(this);
+				image.setImageResource(Services.getInstance(this).getServiceById(key).getIconDrawable());
+				image.setPadding(0, 5, 5, 0);
+				images.addView(image);
+			}
+		}
+
+		// create alert dialog builder
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(layout);		
+		builder.setPositiveButton("OK", this);
+		
+		// create alert dialog
+		AlertDialog alertDialog = builder.create();
+		alertDialog.setIcon(R.drawable.check);
+		alertDialog.setTitle("Check-in Successful!");
+		alertDialog.show(); 
+	}
+
+	/**
+	 * onClick
+	 * 
+	 * @param DialogInterface dialog
+	 * @param int which
+	 */
+	public void onClick(DialogInterface dialog, int which) 
+	{
+		// return to nearby places
+		Intent i = new Intent(this, NearbyPlaces.class);
+		startActivity(i);
+	}
+		
+	/**
+	 * isRouteDisplayed
+	 * 
+	 * @return boolean
+	 */
+	@Override
+	protected boolean isRouteDisplayed() 
+	{
+		return false;
 	}
 }
