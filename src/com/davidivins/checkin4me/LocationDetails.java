@@ -12,13 +12,16 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * LocationDetails
@@ -40,6 +44,20 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 {
 	private static final String TAG = "LocationDetails";
 	Locale current_location = new Locale();
+	HashMap<Integer, Boolean> checkin_statuses = new HashMap<Integer, Boolean>();
+	private static ProgressDialog checking_in_dialog = null;
+	
+	private final Handler handler = new Handler(); 
+	private Thread checkin_thread;
+	
+	// acts as callback from thread
+	final Runnable processCheckIn = new Runnable() 
+	{
+		public void run() 
+		{
+			checkInComplete();
+		}
+	};
 	
 	/**
 	 * onCreate
@@ -114,6 +132,18 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		Button button = (Button)findViewById(R.id.check_in_button);
 		button.setOnClickListener(this);
 	}
+	
+	/**
+	 * onStop
+	 */
+	public void onStop()
+	{
+		super.onStop();
+		
+		// cancel any dialogs showing
+		if (checking_in_dialog != null && checking_in_dialog.isShowing())
+			checking_in_dialog.cancel();
+	}
 
 	/**
 	 * onClick
@@ -122,22 +152,40 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 	 */
 	public void onClick(View view) 
 	{
+		// cancel acquiring location dialog
+		if (null != checking_in_dialog && checking_in_dialog.isShowing())
+			checking_in_dialog.cancel();
+		
+		// get list and adapter
 		ListView list_view = (ListView)findViewById(R.id.location_service_list);
 		ServiceCheckListAdapter adapter = (ServiceCheckListAdapter)list_view.getAdapter();
 		
+		// retrieve services that were checked
 		HashMap<Integer, Boolean> services_checked = adapter.getServicesChecked();
-		Set<Integer> keys = services_checked.keySet();
+		ArrayList<Integer> service_ids = new ArrayList<Integer>();
 		
+		// pull out services checked
+		Set<Integer> keys = services_checked.keySet();
 		for(int key : keys)
 		{
 			Log.i(TAG, "service connected id = " + key + " and checked state = " + services_checked.get(key));
+			if (services_checked.get(key))
+				service_ids.add(key);
 		}
 		
-		
-		HashMap<Integer, Boolean> checkin_statuses = new HashMap<Integer, Boolean>();
-		checkin_statuses.put(0, true);
-		checkin_statuses.put(1, true);
-		displayCheckInStatus(checkin_statuses);
+		if (service_ids.isEmpty())
+		{
+			Toast.makeText(this, "No services checked", Toast.LENGTH_SHORT).show();
+		}
+		else
+		{		
+			checking_in_dialog = ProgressDialog.show(this, "", "Checking in...", true);
+			
+			// create and start check-in thread
+			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+			checkin_thread = new Thread(new CheckInThread(this, service_ids, current_location, settings), "CheckinThread");
+			checkin_thread.start();
+		}
 	}
 	
 	/**
@@ -204,5 +252,74 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 	protected boolean isRouteDisplayed() 
 	{
 		return false;
+	}
+	
+	/**
+	 * checkInComplete
+	 */
+	protected void checkInComplete()
+	{
+		Log.i(TAG, "received check-in completed.");
+    	
+		// join thread even though we know it already completed
+		try 
+		{
+			if (checkin_thread != null)
+				checkin_thread.join();
+		} 
+		catch (InterruptedException e) 
+		{
+			Log.i(TAG, "Thread interrupted already");
+		}
+		
+		// cancel acquiring location dialog
+		if (null != checking_in_dialog && checking_in_dialog.isShowing())
+			checking_in_dialog.cancel();
+		
+		// mock return statuses
+//		checkin_statuses.clear();
+//		checkin_statuses.put(0, true);
+//		checkin_statuses.put(1, true);
+		
+		// display check in dialog
+		displayCheckInStatus(checkin_statuses);
+	}
+	
+	/**
+	 * CheckInThread
+	 * 
+	 * @author david
+	 */
+	class CheckInThread implements Runnable
+	{
+		Activity activity;
+		ArrayList<Integer> service_ids;
+		Locale location;
+		SharedPreferences settings;
+		
+		/**
+		 * CheckInThread
+		 * 
+		 * @param activity
+		 * @param service_ids
+		 * @param settings
+		 */
+		CheckInThread(Activity activity, ArrayList<Integer> service_ids, Locale location, SharedPreferences settings)
+		{
+			this.activity = activity;
+			this.service_ids = service_ids;
+			this.location = location;
+			this.settings = settings;
+		}
+		
+		/**
+		 * run
+		 */
+		public void run() 
+		{
+			checkin_statuses.clear();
+			checkin_statuses = Services.getInstance(activity).checkIn(service_ids, location, settings);
+			handler.post(processCheckIn);
+		}
 	}
 }

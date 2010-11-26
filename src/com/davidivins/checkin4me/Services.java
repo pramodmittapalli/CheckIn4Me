@@ -274,56 +274,53 @@ public class Services
 		return locations;
 	}
 	
-//	/**
-//	 * checkIn
-//	 * 
-//	 * @param Locale location
-//	 * @param long[] checked_box_ids
-//	 * @return ??
-//	 */
-//	public boolean checkIn(Locale location, SharedPreferences settings)
-//	{
-//		ArrayList<Thread> threads = new ArrayList<Thread>();
-//		ArrayList<ArrayList<Locale>> location_lists = new ArrayList<ArrayList<Locale>>();
-//		
-//		// get location request threads
-//		for (Service service : services)
-//		{
-//			Log.i(TAG, "Starting thread for service " + service.getName());
-//			if (service.connected(settings))
-//				threads.add(new Thread(service.getAPIAdapter().getLocationThread(longitude, latitude, settings), service.getName()));			
-//		}
-//		
-//		// start threads
-//		for (Thread thread : threads)
-//		{
-//			thread.start();
-//		}
-//		
-//		// join threads
-//		for (Thread thread : threads)
-//		{
-//			try
-//			{
-//				thread.join();
-//			}
-//			catch (InterruptedException e)
-//			{
-//				Log.i(TAG, thread.getName() + " thread is interrupted already");
-//			}
-//		}
-//		
-//		// get latest locations
-//		for (Service service : services)
-//		{
-//			if (service.connected(settings))
-//				location_lists.add(service.getAPIAdapter().getLatestLocations());
-//		}
-//		
-//		// merge locations
-//		ArrayList<Locale> locations = mergeLocations(location_lists);
-//		Collections.sort(locations, new LocaleNameComparator());
-//		Collections.sort(locations, new LocaleServicesTotalComparator());
-//		return locations;
-//	}
+	/**
+	 * checkIn
+	 * 
+	 * @param service_ids
+	 * @param location
+	 * @param settings
+	 */
+	public HashMap<Integer, Boolean> checkIn(ArrayList<Integer> service_ids, Locale location, SharedPreferences settings)
+	{
+		ArrayList<Thread> threads = new ArrayList<Thread>();
+		HashMap<Integer, Boolean> checkin_statuses = new HashMap<Integer, Boolean>();
+		
+		// get location request threads
+		for (int service_id : service_ids)
+		{
+			Service service = getServiceById(service_id);
+			if (service.connected(settings))
+				threads.add(new Thread(service.getAPIAdapter().getCheckInThread(location, settings), service.getName()));			
+		}
+		
+		// start threads
+		for (Thread thread : threads)
+		{
+			thread.start();
+		}
+		
+		// join threads
+		for (Thread thread : threads)
+		{
+			try
+			{
+				thread.join();
+			}
+			catch (InterruptedException e)
+			{
+				Log.i(TAG, thread.getName() + " thread is interrupted already");
+			}
+		}
+		
+		// get latest locations
+		for (int service_id : service_ids)
+		{
+			Service service = getServiceById(service_id);
+			if (service.connected(settings))
+				checkin_statuses.put(service.getId(), service.getAPIAdapter().getLatestCheckInStatus());
+		}
+		
+		return checkin_statuses;
+	}
 }
