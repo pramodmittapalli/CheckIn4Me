@@ -17,7 +17,6 @@ import android.util.Log;
 public class Locale 
 {
 	private static final String TAG = "Locale";
-	private static int last_saved_xref_count = 0;
 	private String name;
 	private String description;
 
@@ -184,10 +183,13 @@ public class Locale
 	/**
 	 * store
 	 * 
-	 * @param Editor settings_editor
+	 * @param SharedPreferences settings
 	 */
-	public void store(Editor settings_editor)
-	{		
+	public void store(SharedPreferences settings)
+	{
+		Editor settings_editor = settings.edit();
+		int last_saved_xref_count = settings.getInt("last_saved_xref_count", 0);
+		
 		settings_editor.putString("current_location_name", name);
 		settings_editor.putString("current_location_description", description);
 		settings_editor.putString("current_location_longitude", longitude);
@@ -214,8 +216,8 @@ public class Locale
 			settings_editor.putString("current_location_xref_value_" + count, value);
 			count++;
 		}
-		Log.i(TAG, "Saved " + count + " mappings");
 		
+		Log.i(TAG, "Saved " + count + " mappings");
 		settings_editor.commit();
 	}
 	
@@ -226,6 +228,8 @@ public class Locale
 	 */
 	public void load(SharedPreferences settings)
 	{
+		Editor settings_editor = settings.edit();
+		
 		name = settings.getString("current_location_name", "");
 		description = settings.getString("current_location_description", "");
 		longitude = settings.getString("current_location_longitude", "");
@@ -249,76 +253,10 @@ public class Locale
 			else
 			{
 				Log.i(TAG, "Loaded " + i + " mappings");
-				last_saved_xref_count = i;
+				settings_editor.putInt("last_saved_xref_count", i);
+				settings_editor.commit();
 				break;
 			}
 		}
 	}
 }
-
-//
-// Gowalla Location
-//
-//"checkins_url": "/checkins?spot_id=10526",
-//"trending_level": 1,
-//"url": "/spots/10526",
-//"lat": 30.2836404612,
-//"_image_url_50": "http://static.gowalla.com/spots/10526-c5170efc635d92275be62e2354f7123c-100.png?1",
-//"spot_categories": [
-//  {
-//    "url": "/categories/79",
-//    "name": "Stadium"
-//  }
-//],
-//"description": "Home of the UT Longhorn football team and a capacity of 94,113; it's the largest non-professional football venue in the state of Texas, in the Big 12 Conference and is the 5th largest on-campus stadium in the NCAA.",
-//"checkins_count": 1469,
-//"radius_meters": 300,
-//"photos_count": 76,
-//"image_url": "http://static.gowalla.com/spots/10526-c5170efc635d92275be62e2354f7123c-100.png?1",
-//"lng": -97.7325296402,
-//"address": {
-//  "locality": "Austin",
-//  "region": "TX"
-//},
-//"strict_radius": false,
-//"users_count": 780,
-//"items_count": 10,
-//"name": "Darrell K. Royal Stadium",
-//"items_url": "/spots/10526/items",
-//"activity_url": "/spots/10526/events",
-//"highlights_url": "/spots/10526/highlights",
-//"_image_url_200": "http://static.gowalla.com/spots/10526-053f156359609e0deb077157007a4352-200.png?1"
-//},
-
-//
-// Foursquare Location
-//
-//groups:[
-//        {
-//            type:'Nearby favorites',
-//            venue:{
-//                id:257,
-//                name:'Bowery Ballroom',
-//                primarycategory:{
-//                    id:{
-//                        value:79167,
-//                        id:{
-//                            fullpathname:'Nightlife:Music Venue:Rock Club',
-//                            nodename:'Rock Club',
-//                            iconurl:'http://foursquare.com/img/categories/nightlife/default.png',
-//                            distance:10,
-//                            address:'6 Delancey St',
-//                            crossstreet:'at Bowery',
-//                            city:'New York',
-//                            state:'NY',
-//                            zip:10002,
-//                            geolat:40.7204,
-//                            geolong:-73.9933,
-//                            phone:2120000000,
-//                            twitter:'BoweryBallroom',
-//                            stats:{
-//                                herenow:36
-//                            },
-//                            venue:{
-//                                id:5055,
-//                                name:'Hiro Ballroom'

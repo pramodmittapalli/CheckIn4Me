@@ -227,11 +227,10 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	{
 		// get the settings and editor
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		Editor settings_editor = settings.edit();
 		
 		// store selected location
 		Locale location = locations.get(position);
-		location.store(settings_editor);
+		location.store(settings);
 		
 		// load location details activity
 		startActivity(new Intent(this, LocationDetails.class));
