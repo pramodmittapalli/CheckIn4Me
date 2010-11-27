@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.Menu;
@@ -28,6 +31,7 @@ import android.preference.PreferenceManager;
 public class ServiceConnection extends ListActivity implements OnItemClickListener
 {
 	private static final String TAG = "ServiceConnection";
+	private static int latest_service_id_selected = 0;
 
 	/**
 	 * onCreate
@@ -80,12 +84,36 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 	{
 		// save position as service id for service connection activity
 		Log.i(TAG, "clicked service id = " + position);
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+		latest_service_id_selected = position;
 		
 		if (Services.getInstance(this).getServiceById(position).getOAuthConnector() != null)
 		{
-			Intent i = new Intent(this, Authorization.class);
-			i.putExtra("service_id", position);
-			startActivity(i);
+			if (Services.getInstance(this).getServiceById(position).connected(settings))
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(Services.getInstance(this).getServiceById(position).getName() + 
+					" is already connected. Do you wish to reconnect it?")
+					.setCancelable(false)
+					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							loadAuthorizationActivity();
+						}
+					})
+					.setNegativeButton("No", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+				
+				AlertDialog alert = builder.create();
+				alert.show();
+			}
+			else
+			{
+				loadAuthorizationActivity();
+			}
 		}
 		else
 		{
@@ -94,6 +122,16 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 			Log.e(TAG, Services.getInstance(this).getServiceById(position).getName() + " service doesn't work yet :(");
 		}
+	}
+	
+	/**
+	 * loadAuthorizationActivity
+	 */
+	public void loadAuthorizationActivity()
+	{
+		Intent i = new Intent(this, Authorization.class);
+		i.putExtra("service_id", latest_service_id_selected);
+		startActivity(i);
 	}
 	
 	/**
@@ -140,5 +178,10 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		}
 		
 		return result;
+	}
+
+	public void onClick(DialogInterface dialog, int which) {
+		// TODO Auto-generated method stub
+		
 	}
 }
