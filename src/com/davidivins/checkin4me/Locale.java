@@ -7,6 +7,7 @@ import com.google.android.maps.GeoPoint;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 /**
  * Location
@@ -15,6 +16,8 @@ import android.content.SharedPreferences.Editor;
  */
 public class Locale 
 {
+	private static final String TAG = "Locale";
+	private static int last_saved_xref_count = 0;
 	private String name;
 	private String description;
 
@@ -198,6 +201,12 @@ public class Locale
 		Set<Integer> keys = service_location_ids.keySet();
 		int count = 0;
 		
+		for (int i = 0; i < last_saved_xref_count; i++)
+		{
+			settings_editor.remove("current_location_xref_key_" + i);
+			settings_editor.remove("current_location_xref_value_" + i);
+		}
+		
 		for (Integer key : keys)
 		{
 			String value = service_location_ids.get(key);
@@ -205,6 +214,7 @@ public class Locale
 			settings_editor.putString("current_location_xref_value_" + count, value);
 			count++;
 		}
+		Log.i(TAG, "Saved " + count + " mappings");
 		
 		settings_editor.commit();
 	}
@@ -237,7 +247,11 @@ public class Locale
 				service_location_ids.put(key, value);
 			}
 			else
+			{
+				Log.i(TAG, "Loaded " + i + " mappings");
+				last_saved_xref_count = i;
 				break;
+			}
 		}
 	}
 }

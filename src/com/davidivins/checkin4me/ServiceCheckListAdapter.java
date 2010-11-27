@@ -28,7 +28,7 @@ class ServiceCheckListAdapter extends ArrayAdapter<Service> implements OnChecked
 	private int row_resource_id;
 	private ArrayList<Service> items;
 	
-	private static HashMap<Integer, Boolean> services_checked = new HashMap<Integer, Boolean>();
+	private HashMap<Integer, Boolean> services_checked;
 
 	/**
 	 * ServiceCheckListAdapter
@@ -45,6 +45,7 @@ class ServiceCheckListAdapter extends ArrayAdapter<Service> implements OnChecked
 		this.row_resource_id = row_resource_id;
 		this.items = items;
 		
+		services_checked = new HashMap<Integer, Boolean>();
 		for(Service service : items)
 		{
 			services_checked.put(service.getId(), true);

@@ -147,7 +147,15 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		list_view.setCacheColorHint(Color.WHITE);
 
 		// add services to list
-		ArrayList<Service> services = Services.getInstance(this).getConnectedServicesAsArrayList(settings);
+		HashMap<Integer, String> service_id_location_id_xref = current_location.getServiceIdToLocationIdMap();
+		ArrayList<Service> services = new ArrayList<Service>();
+		Set<Integer> service_ids = service_id_location_id_xref.keySet();
+		
+		for(int service_id : service_ids)
+		{
+			services.add(Services.getInstance(this).getServiceById(service_id));
+		}
+		
 		ServiceCheckListAdapter adapter = new ServiceCheckListAdapter(this, R.layout.location_details_row, services);
 		list_view.setAdapter(adapter);
 		
