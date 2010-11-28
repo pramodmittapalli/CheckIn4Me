@@ -250,7 +250,8 @@ public class Services
 				for (Locale existing_location : locations)
 				{
 					// if their names match, merge them
-					if (existing_location.getName().equals(incoming_location.getName()))
+					//if (existing_location.getName().equals(incoming_location.getName()))
+					if (namesAreTheSame(existing_location.getName(), incoming_location.getName()))
 					{
 						merged = true;
 						
@@ -264,6 +265,9 @@ public class Services
 						{
 							existing_location.mapServiceIdToLocationId(key, mappings.get(key));
 						}
+						
+						// only merge with one location
+						break;
 					}
 				}
 				
@@ -274,6 +278,36 @@ public class Services
 		}
 		
 		return locations;
+	}
+	
+	/**
+	 * namesAreTheSame
+	 * 
+	 * @param String existing_name
+	 * @param String incoming_name
+	 */
+	private boolean namesAreTheSame(String existing_name, String incoming_name)
+	{
+		boolean result = false;
+		
+		String incoming_name_without_apostrophe = incoming_name.replace("'", "");
+		String incoming_name_with_spaces_for_dashes = incoming_name.replace("-", " ");
+		String incoming_name_without_dashes = incoming_name.replace("-", "");
+		String incoming_name_without_punctuation_or_spaces = incoming_name.replaceAll("[^A-Za-z0-9]", "");
+		
+		String existing_name_without_apostrophe = existing_name.replace("'", "");
+		String existing_name_with_spaces_for_dashes = existing_name.replace("-", " ");
+		String existing_name_without_dashes = existing_name.replace("-", "");
+		String existing_name_without_punctuation_or_spaces = existing_name.replaceAll("[^A-Za-z0-9]", "");
+		
+		if (existing_name.equalsIgnoreCase(incoming_name) ||
+				existing_name_without_apostrophe.equalsIgnoreCase(incoming_name_without_apostrophe) ||
+				existing_name_with_spaces_for_dashes.equalsIgnoreCase(incoming_name_with_spaces_for_dashes) ||
+				existing_name_without_dashes.equalsIgnoreCase(incoming_name_without_dashes) ||
+				existing_name_without_punctuation_or_spaces.equalsIgnoreCase(incoming_name_without_punctuation_or_spaces))
+			result = true;
+		
+		return result;
 	}
 	
 	/**

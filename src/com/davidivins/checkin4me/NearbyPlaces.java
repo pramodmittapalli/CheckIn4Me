@@ -62,7 +62,8 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	{
 		super.onCreate(savedInstanceState);
 		
-		requestCoordinates();
+		//if (!coordinatesAlreadyExist())
+			requestCoordinates();
 
 		setContentView(R.layout.nearby_places);
 	
@@ -70,6 +71,23 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		getListView().setOnItemClickListener(this);
 		getListView().setBackgroundColor(Color.WHITE);
 		getListView().setCacheColorHint(Color.WHITE);
+	}
+	
+	/**
+	 * coordinatesAlreadyExist()
+	 * 
+	 * @return boolean
+	 */
+	public boolean coordinatesAlreadyExist()
+	{
+		boolean result = false;
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		if (!settings.getString("current_longitude", "").equals("") &&
+				!settings.getString("current_latitude", "").equals(""))
+			result = true;
+		
+		return result;
 	}
 	
 	/**

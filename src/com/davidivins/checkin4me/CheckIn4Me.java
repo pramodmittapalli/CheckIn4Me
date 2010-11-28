@@ -3,6 +3,7 @@ package com.davidivins.checkin4me;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 
 /**
@@ -21,14 +22,45 @@ public class CheckIn4Me extends Activity
 	public void onCreate(Bundle saved_instance_state)
 	{
 		super.onCreate(saved_instance_state);
-		Intent intent;
+		setContentView(R.layout.checkin4me);
 		
-		// go straight to nearby places if atleast one service is connected
-		if (Services.getInstance(this).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(this)))
-			intent = new Intent(this, NearbyPlaces.class);
-		else
-			intent = new Intent(this, ServiceConnection.class);
+		Handler handler = new Handler(); 
+		handler.postDelayed(new StartProgram(this), 2000); 
+	}
+	
+	/**
+	 * StartProgram
+	 * 
+	 * @author david
+	 */
+	class StartProgram implements Runnable
+	{
+		private Activity activity;
 		
-		startActivity(intent);
+		/**
+		 * StartProgram
+		 * 
+		 * @param activity
+		 */
+		StartProgram(Activity activity)
+		{
+			this.activity = activity;
+		}
+
+		/**
+		 * run
+		 */
+		public void run() 
+		{
+			Intent intent;
+			
+			// go straight to nearby places if atleast one service is connected
+			if (Services.getInstance(activity).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(activity)))
+				intent = new Intent(activity, NearbyPlaces.class);
+			else
+				intent = new Intent(activity, ServiceConnection.class);
+			
+			startActivity(intent);
+		}
 	}
 }
