@@ -41,9 +41,9 @@ public class GowallaAPIAdapter implements APIAdapter
 	 * @param settings
 	 * @return LocationThread
 	 */
-	public Runnable getLocationThread(String longitude, String latitude, SharedPreferences settings)
+	public Runnable getLocationThread(String query,String longitude, String latitude, SharedPreferences settings)
 	{
-		return new LocationThread(longitude, latitude);
+		return new LocationThread(query, longitude, latitude);
 	}
 	
 	/**
@@ -86,17 +86,20 @@ public class GowallaAPIAdapter implements APIAdapter
 	 */
 	class LocationThread implements Runnable
 	{
+		private String query;
 		private String longitude;
 		private String latitude;
 		
 		/**
 		 * LocationThread
 		 * 
+		 * @param query
 		 * @param longitude
 		 * @param latitude
 		 */
-		LocationThread(String longitude, String latitude)
+		LocationThread(String query, String longitude, String latitude)
 		{
+			this.query = query;
 			this.longitude = longitude;
 			this.latitude = latitude;
 		}
@@ -118,6 +121,8 @@ public class GowallaAPIAdapter implements APIAdapter
 			request.addHeader("Accept", "application/" + config.getProperty("api_format"));
 			
 			// set query parameters
+			if (query != null)
+				request.addQueryParameter("q", query);
 			request.addQueryParameter("lat", latitude);
 			request.addQueryParameter("lng", longitude);
 			request.addQueryParameter("radius", "50");

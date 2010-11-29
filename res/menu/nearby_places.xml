@@ -3,6 +3,9 @@
 	<item android:id="@+id/refresh"
 		android:icon="@drawable/ic_menu_refresh"
 		android:title="@string/menu_option_refresh" />
+	<item android:id="@+id/search"
+		android:icon="@android:drawable/ic_menu_search"
+		android:title="@string/menu_option_search" />
 	<item android:id="@+id/connect_services"
 		android:icon="@android:drawable/ic_menu_add"
 		android:title="@string/menu_option_connect" />

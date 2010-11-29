@@ -34,11 +34,13 @@
 			</intent-filter>
 		</activity>
         
-		<activity android:name=".NearbyPlaces" android:label="@string/nearby_places_title">
+		<activity android:name=".NearbyPlaces" android:label="@string/nearby_places_title" android:launchMode="singleTop">
 			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			<meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
 		</activity>
 		
 		<activity android:name=".LocationDetails" android:label="@string/location_details_title">

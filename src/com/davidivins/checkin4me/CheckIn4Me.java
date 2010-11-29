@@ -29,6 +29,17 @@ public class CheckIn4Me extends Activity
 	}
 	
 	/**
+	 * onResume
+	 */
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		Handler handler = new Handler(); 
+		handler.postDelayed(new StartProgram(this), 2000); 
+	}
+	
+	/**
 	 * StartProgram
 	 * 
 	 * @author david

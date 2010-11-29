@@ -166,12 +166,13 @@ public class Services
 	/**
 	 * getAllLocations
 	 * 
+	 * @param String query
 	 * @param String longitude
 	 * @param String latutude
 	 * @param SharedParameters settings
 	 * @return ArrayList<Locale>
 	 */
-	public ArrayList<Locale> getAllLocations(String longitude, String latitude, SharedPreferences settings)
+	public ArrayList<Locale> getAllLocations(String query, String longitude, String latitude, SharedPreferences settings)
 	{
 		ArrayList<Thread> threads = new ArrayList<Thread>();
 		ArrayList<ArrayList<Locale>> location_lists = new ArrayList<ArrayList<Locale>>();
@@ -182,7 +183,7 @@ public class Services
 			if (service.connected(settings))
 			{
 				Log.i(TAG, "Creating thread for service " + service.getName());
-				threads.add(new Thread(service.getAPIAdapter().getLocationThread(longitude, latitude, settings), service.getName()));
+				threads.add(new Thread(service.getAPIAdapter().getLocationThread(query, longitude, latitude, settings), service.getName()));
 			}
 		}
 		

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +41,8 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	private String current_longitude;
 	private String current_latitude;
 	
+	private String current_query = null;
+	
 	private final Handler handler = new Handler(); 
 	private Thread locations_thread;
 	
@@ -58,12 +61,50 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	 * @param Bundle savedInstanceState
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle saved_instance_state)
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate(saved_instance_state);
+		handleIntent(getIntent());
+	}
+	/**
+	 * onSearchRequested
+	 * 
+	 * @return boolean
+	 */
+	@Override
+	public boolean onSearchRequested() 
+	{
+		return super.onSearchRequested();
+	}
+	
+	/**
+	 * onNewIntent
+	 * 
+	 * @param Intent intent
+	 */
+	@Override
+	protected void onNewIntent(Intent intent) 
+	{
+		setIntent(intent);
+		handleIntent(intent);
+	}
+	
+	private void handleIntent(Intent intent) 
+	{
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) 
+		{
+			current_query = intent.getStringExtra(SearchManager.QUERY);
+			this.setTitle("Results");
+		}
+		else
+		{
+			current_query = null;
+			this.setTitle("Nearby Places");
+		}
 		
-		//if (!coordinatesAlreadyExist())
-			requestCoordinates();
+		Log.i(TAG, "current_query = " + current_query);
+		
+		requestCoordinates();
 
 		setContentView(R.layout.nearby_places);
 	
@@ -71,23 +112,6 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		getListView().setOnItemClickListener(this);
 		getListView().setBackgroundColor(Color.WHITE);
 		getListView().setCacheColorHint(Color.WHITE);
-	}
-	
-	/**
-	 * coordinatesAlreadyExist()
-	 * 
-	 * @return boolean
-	 */
-	public boolean coordinatesAlreadyExist()
-	{
-		boolean result = false;
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		if (!settings.getString("current_longitude", "").equals("") &&
-				!settings.getString("current_latitude", "").equals(""))
-			result = true;
-		
-		return result;
 	}
 	
 	/**
@@ -136,7 +160,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		settings_editor.putString("current_latitude", current_latitude);
 		settings_editor.commit();
 		
-		locations_thread = new Thread(new LocationThread(this, current_longitude, current_latitude, settings), "LocationThread");
+		locations_thread = new Thread(new LocationThread(this, current_query, current_longitude, current_latitude, settings), "LocationThread");
 		locations_thread.start();
 	}
 
@@ -178,13 +202,6 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		{
 			Log.i(TAG, "Thread interrupted already");
 		}
-
-		if (locations.isEmpty())
-			Log.i(TAG, "service locations retrieved successfully and are empty as expected.");
-		else
-			Log.i(TAG, "WE HAVE LOCATIONS!!");
-    	
-		//getMockLocations();
 		
 		// setup list for retrieved locations
 		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations);
@@ -227,7 +244,11 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 			case R.id.refresh:
 				requestCoordinates();
 				break;
+			case R.id.search:
+				onSearchRequested();
+				break;
 			default:
+				// do nothing
 		}
 		
 		return result;
@@ -263,6 +284,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	class LocationThread implements Runnable
 	{
 		Activity activity;
+		String query;
 		String longitude;
 		String latitude;
 		SharedPreferences settings;
@@ -271,13 +293,15 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		 * LocationThread
 		 * 
 		 * @param activity
+		 * @param query
 		 * @param longitude
 		 * @param latitude
 		 * @param settings
 		 */
-		LocationThread(Activity activity, String longitude, String latitude, SharedPreferences settings)
+		LocationThread(Activity activity, String query, String longitude, String latitude, SharedPreferences settings)
 		{
 			this.activity = activity;
+			this.query = query;
 			this.longitude = longitude;
 			this.latitude = latitude;
 			this.settings = settings;
@@ -289,54 +313,9 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		public void run() 
 		{
 			locations.clear();
-			locations = Services.getInstance(activity).getAllLocations(longitude, latitude, settings);
+			locations = Services.getInstance(activity).getAllLocations(query, longitude, latitude, settings);
 			handler.post(updateLocations);
 		}
 	}
-	
-//	/**
-//	 * getMockLocations
-//	 */
-//	private void getMockLocations()
-//	{
-//		Locale location = new Locale("Dave's House", "", "666", "6666", "","","","");
-//		location.mapServiceIdToLocationId(0, "");
-//		location.mapServiceIdToLocationId(1, "");
-//		location.mapServiceIdToLocationId(2, "");
-//		locations.add(location);
-//		
-//		Locale location0 = new Locale("Dave's Gay Neighbors' House", "", "000", "0000", "","","","");
-//		location0.mapServiceIdToLocationId(0, "");
-//		location0.mapServiceIdToLocationId(1, "");
-//		location0.mapServiceIdToLocationId(2, "");
-//		locations.add(location0);
-//		
-//		Locale location1 = new Locale("Genise's House", "", "13", "1313", "","","","");
-//		location1.mapServiceIdToLocationId(0, "");
-//		location1.mapServiceIdToLocationId(2, "");
-//		locations.add(location1);
-//		
-//		Locale location2 = new Locale("Taco Bell", "", "111", "1111", "","","","");
-//		location2.mapServiceIdToLocationId(0, "");
-//		location2.mapServiceIdToLocationId(1, "");
-//		locations.add(location2);
-//		
-//		Locale location3 = new Locale("Wawa", "", "222", "2222", "","","","");
-//		location3.mapServiceIdToLocationId(0, "");
-//		location3.mapServiceIdToLocationId(1, "");
-//		location3.mapServiceIdToLocationId(2, "");
-//		locations.add(location3);
-//		
-//		Locale location4 = new Locale("Applebees", "", "999", "9999", "","","","");
-//		location4.mapServiceIdToLocationId(1, "");
-//		location4.mapServiceIdToLocationId(2, "");
-//		locations.add(location4);
-//		
-//		for (int i = 0; i < 5; i++)
-//		{
-//			Locale location5 = new Locale("Party Central", "", Integer.toString(i), Integer.toString(i * 5), "","","","");
-//			location5.mapServiceIdToLocationId(2, "");
-//			locations.add(location5);
-//		}
-//	}
+
 }

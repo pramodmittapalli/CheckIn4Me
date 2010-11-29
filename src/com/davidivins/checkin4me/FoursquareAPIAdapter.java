@@ -35,14 +35,15 @@ public class FoursquareAPIAdapter implements APIAdapter
 	/**
 	 * getLocationThread
 	 * 
+	 * @param query
 	 * @param longitude
 	 * @param latitude
 	 * @param settings
 	 * @return LocationThread
 	 */
-	public Runnable getLocationThread(String longitude, String latitude, SharedPreferences settings)
+	public Runnable getLocationThread(String query, String longitude, String latitude, SharedPreferences settings)
 	{
-		return new LocationThread(longitude, latitude, settings);
+		return new LocationThread(query, longitude, latitude, settings);
 	}
 	
 	/**
@@ -85,6 +86,7 @@ public class FoursquareAPIAdapter implements APIAdapter
 	 */
 	class LocationThread implements Runnable
 	{
+		private String query;
 		private String longitude;
 		private String latitude;
 		private SharedPreferences settings;
@@ -92,11 +94,13 @@ public class FoursquareAPIAdapter implements APIAdapter
 		/**
 		 * LocationThread
 		 * 
+		 * @param query
 		 * @param longitude
 		 * @param latitude
 		 */
-		LocationThread(String longitude, String latitude, SharedPreferences settings)
+		LocationThread(String query, String longitude, String latitude, SharedPreferences settings)
 		{
+			this.query = query;
 			this.longitude = longitude;
 			this.latitude = latitude;
 			this.settings = settings;
@@ -120,6 +124,8 @@ public class FoursquareAPIAdapter implements APIAdapter
 			request.addHeader("User-Agent", "CheckIn4Me:1.0");
 			
 			// set query parameters
+			if (query != null)
+				request.addQueryParameter("q", query);
 			request.addQueryParameter("oauth_consumer_key", config.getProperty("oauth_consumer_key"));
 			request.addQueryParameter("oauth_nonce", request.generateNonce());
 			request.addQueryParameter("oauth_signature_method", config.getProperty("oauth_signature_method"));
@@ -135,7 +141,7 @@ public class FoursquareAPIAdapter implements APIAdapter
 			
 			// save locations
 			if (response.getSuccessStatus())
-				setLocationsFromJson(response.getResponseString());	
+				setLocationsFromJson(response.getResponseString(), query);	
 		}
 		
 		/**
@@ -143,10 +149,14 @@ public class FoursquareAPIAdapter implements APIAdapter
 		 * 
 		 * @param json
 		 */
-		private void setLocationsFromJson(String json_string)
+		private void setLocationsFromJson(String json_string, String query)
 		{
 			latest_locations.clear();
+			String type = "Nearby";
 			
+			if (query != null)
+				type = "Matching Places";
+				
 			try 
 			{
 				JSONObject json = new JSONObject(json_string);
@@ -156,7 +166,7 @@ public class FoursquareAPIAdapter implements APIAdapter
 				{
 					JSONObject group = groups.getJSONObject(i);
 					
-					if (group.getString("type").equals("Nearby"))
+					if (group.getString("type").equals(type))
 					{
 						JSONArray venues = group.getJSONArray("venues");
 						
