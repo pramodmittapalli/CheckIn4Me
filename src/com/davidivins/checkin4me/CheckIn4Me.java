@@ -13,6 +13,9 @@ import android.preference.PreferenceManager;
  */
 public class CheckIn4Me extends Activity
 {
+	private Handler handler = new Handler();
+	private StartProgram program = null;
+	
 	/**
 	 * onCreate
 	 * 
@@ -23,9 +26,7 @@ public class CheckIn4Me extends Activity
 	{
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.checkin4me);
-		
-		Handler handler = new Handler(); 
-		handler.postDelayed(new StartProgram(this), 2000); 
+		runProgram();
 	}
 	
 	/**
@@ -35,8 +36,33 @@ public class CheckIn4Me extends Activity
 	public void onResume()
 	{
 		super.onResume();
-		Handler handler = new Handler(); 
-		handler.postDelayed(new StartProgram(this), 2000); 
+		runProgram();
+	}
+	
+	/**
+	 * onStop
+	 */
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+		
+		if (program != null)
+		{
+			handler.removeCallbacks(program);
+			program = null;
+		}
+	}
+	
+	/**
+	 * runProgram
+	 */
+	private void runProgram()
+	{
+		if (program == null)
+			program = new StartProgram(this);
+		
+		handler.postDelayed(program, 2000);
 	}
 	
 	/**
