@@ -19,7 +19,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 /**
  * ServiceCheckListAdapter
  * 
- * @author david
+ * @author david ivins
  */
 class ServiceCheckListAdapter extends ArrayAdapter<Service> implements OnCheckedChangeListener
 {

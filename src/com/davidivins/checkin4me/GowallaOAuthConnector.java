@@ -13,7 +13,7 @@ import android.util.Log;
 /**
  * GowallaOAuthConnector
  * 
- * @author david
+ * @author david ivins
  */
 public class GowallaOAuthConnector implements OAuthConnector
 {

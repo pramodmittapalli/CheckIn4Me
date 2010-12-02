@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import android.content.SharedPreferences;
 
+/**
+ * APIAdapter
+ * 
+ * @author david ivins
+ */
 public interface APIAdapter 
 {
 	abstract public Runnable getLocationThread(String query, String longitude, String latitude, SharedPreferences settings);

@@ -3,7 +3,7 @@ package com.davidivins.checkin4me;
 /**
  * FoursquareLogo
  * 
- * @author david
+ * @author david ivins
  */
 public class FoursquareLogo implements DrawableListItem
 {

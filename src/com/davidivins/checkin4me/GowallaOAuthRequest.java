@@ -15,7 +15,7 @@ import android.util.Log;
 /**
  * GowallaOAuthRequest
  * 
- * @author david
+ * @author david ivins
  */
 public class GowallaOAuthRequest extends Request 
 {

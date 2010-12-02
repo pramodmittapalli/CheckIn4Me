@@ -10,7 +10,7 @@ import android.util.Log;
 /**
  * FoursquareService
  * 
- * @author david
+ * @author david ivins
  */
 public class FoursquareService implements Service
 {

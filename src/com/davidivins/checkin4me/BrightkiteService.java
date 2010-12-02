@@ -10,7 +10,7 @@ import android.util.Log;
 /**
  * BrightkiteService
  * 
- * @author david
+ * @author david ivins
  */
 public class BrightkiteService implements Service
 {

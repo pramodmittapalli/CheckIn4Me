@@ -5,7 +5,7 @@ import java.util.TreeMap;
 /**
  * OAuthResponse
  * 
- * @author david
+ * @author david ivins
  */
 public class OAuthResponse extends Response
 {

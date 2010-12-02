@@ -26,7 +26,7 @@ import android.preference.PreferenceManager;
 /**
  * ServiceConnection
  * 
- * @author david
+ * @author david ivins
  */
 public class ServiceConnection extends ListActivity implements OnItemClickListener
 {

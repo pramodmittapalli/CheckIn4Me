@@ -12,7 +12,7 @@ import android.util.Log;
 /**
  * Location
  * 
- * @author david
+ * @author david ivins
  */
 public class Locale 
 {

@@ -11,6 +11,11 @@ import org.json.JSONObject;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+/**
+ * GowallaAPIAdapter
+ * 
+ * @author david ivins
+ */
 public class GowallaAPIAdapter implements APIAdapter
 {
 	private static final String TAG = "GowallaAPIAdapter";
@@ -23,6 +28,9 @@ public class GowallaAPIAdapter implements APIAdapter
 	
 	/**
 	 * GowallaAPIAdapter
+	 * 
+	 * @param Properties config
+	 * @param int service_id
 	 */
 	public GowallaAPIAdapter(Properties config, int service_id)
 	{

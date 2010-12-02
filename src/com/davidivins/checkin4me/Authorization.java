@@ -13,7 +13,7 @@ import android.widget.Toast;
 /**
  * Authorization
  * 
- * @author david
+ * @author david ivins
  */
 public class Authorization extends Activity
 {	

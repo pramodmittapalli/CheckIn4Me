@@ -7,7 +7,7 @@ import android.util.Log;
 /**
  * Request
  * 
- * @author david
+ * @author david ivins
  */
 abstract public class Request 
 {

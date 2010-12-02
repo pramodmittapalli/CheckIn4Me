@@ -17,7 +17,7 @@ import android.widget.TextView;
 /**
  * LocationAdapter
  * 
- * @author david
+ * @author david ivins
  */
 class LocaleAdapter extends ArrayAdapter<Locale>
 {

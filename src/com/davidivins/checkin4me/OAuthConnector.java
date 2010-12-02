@@ -7,7 +7,7 @@ import android.net.Uri;
 /**
  * OAuthConnector
  * 
- * @author david
+ * @author david ivins
  */
 abstract interface OAuthConnector
 {

@@ -16,7 +16,7 @@ import android.util.Log;
 /**
  * HTTPRequest
  * 
- * @author david
+ * @author david ivins
  */
 public class HTTPRequest extends Request 
 {

@@ -12,7 +12,7 @@ import com.google.android.maps.OverlayItem;
 /**
  * LocationOverlay
  * 
- * @author david
+ * @author david ivins
  */
 public class LocationOverlay extends ItemizedOverlay<OverlayItem>
 {

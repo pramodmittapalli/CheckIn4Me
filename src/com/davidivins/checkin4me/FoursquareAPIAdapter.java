@@ -11,6 +11,11 @@ import org.json.JSONObject;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+/**
+ * FoursquareAPIAdapter
+ * 
+ * @author david ivins
+ */
 public class FoursquareAPIAdapter implements APIAdapter
 {
 	private static final String TAG = "FoursquareAPIAdapter";
@@ -23,6 +28,9 @@ public class FoursquareAPIAdapter implements APIAdapter
 	
 	/**
 	 * FoursquareAPIAdapter
+	 * 
+	 * @param Properties config
+	 * @param int service_id
 	 */
 	public FoursquareAPIAdapter(Properties config, int service_id)
 	{

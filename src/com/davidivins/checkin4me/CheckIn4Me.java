@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 /**
  * CheckIn4Me
  * 
- * @author david
+ * @author david ivins
  */
 public class CheckIn4Me extends Activity
 {

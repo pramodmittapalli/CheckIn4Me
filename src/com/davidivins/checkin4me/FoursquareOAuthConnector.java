@@ -12,7 +12,7 @@ import android.util.Log;
 /**
  * FoursquareOAuth
  * 
- * @author David Ivins
+ * @author david ivins
  */
 public class FoursquareOAuthConnector implements OAuthConnector
 {		

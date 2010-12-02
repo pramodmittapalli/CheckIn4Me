@@ -13,7 +13,7 @@ import android.util.Log;
 /**
  * Services
  * 
- * @author david
+ * @author david ivins
  */
 public class Services
 {

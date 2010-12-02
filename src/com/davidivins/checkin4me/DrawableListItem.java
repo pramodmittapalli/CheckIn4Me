@@ -3,7 +3,7 @@ package com.davidivins.checkin4me;
 /**
  * DrawableListItem
  * 
- * @author david
+ * @author david ivins
  */
 public interface DrawableListItem 
 {

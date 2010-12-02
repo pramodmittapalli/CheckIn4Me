@@ -3,7 +3,7 @@ package com.davidivins.checkin4me;
 /**
  * Response
  * 
- * @author david
+ * @author david ivins
  */
 public class Response 
 {

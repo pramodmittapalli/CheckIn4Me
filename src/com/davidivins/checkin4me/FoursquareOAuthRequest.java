@@ -23,7 +23,7 @@ import android.util.Log;
 /**
  * FoursquareOAuthRequest
  * 
- * @author david
+ * @author david ivins
  */
 public class FoursquareOAuthRequest extends Request 
 {

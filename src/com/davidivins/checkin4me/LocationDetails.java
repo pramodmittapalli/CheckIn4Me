@@ -40,7 +40,7 @@ import android.widget.Toast;
 /**
  * LocationDetails
  * 
- * @author david
+ * @author david ivins
  */
 public class LocationDetails extends MapActivity implements OnClickListener, DialogInterface.OnClickListener
 {

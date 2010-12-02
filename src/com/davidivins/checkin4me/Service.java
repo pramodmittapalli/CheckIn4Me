@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 /**
  * Service
  * 
- * @author david
+ * @author david ivins
  */
 public interface Service
 {

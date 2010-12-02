@@ -28,7 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 /**
  * NearbyPlaces
  * 
- * @author david
+ * @author david ivins
  */
 public class NearbyPlaces extends ListActivity implements LocationListener, OnItemClickListener
 {

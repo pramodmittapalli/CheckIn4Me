@@ -10,7 +10,7 @@ import android.util.Log;
 /**
  * GowallaService
  * 
- * @author david
+ * @author david ivins
  */
 public class GowallaService implements Service
 {
