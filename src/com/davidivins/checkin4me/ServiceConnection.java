@@ -1,10 +1,5 @@
 package com.davidivins.checkin4me;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -17,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.os.Bundle;
@@ -32,40 +26,29 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 {
 	private static final String TAG = "ServiceConnection";
 	private static int latest_service_id_selected = 0;
-
+	
 	/**
 	 * onCreate
 	 * 
 	 * @param Bundle savedInstanceState
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle saved_instance_state)
 	{
-		super.onCreate(savedInstanceState);
+		super.onCreate(saved_instance_state);
+
+		// set the current layout for the activity
+		setContentView(R.layout.service_connection);
 		
-		// initialize services and get list
-		ArrayList<Service> services_list = 
-			Services.getInstance(this).getServicesAsArrayList();
-
-		// define the list which holds the information of the list
-		List<Map<String, Object>> resource_names =
-			new ArrayList<Map<String, Object>>();
-
-		// define the map which will hold the information for each row
-		Map<String, Object> data;
-
-		for (Service service : services_list)
-		{
-			data = new HashMap<String, Object>();
-			data.put(service.getLogo().getKey(), service.getLogo().getDrawable()); 
-			resource_names.add(data);
-		}
-
-		SimpleAdapter service_images = new SimpleAdapter(this, resource_names,
-			R.layout.service_connection, Services.getInstance(this).getLogoKeys(), 
-			Services.getInstance(this).getLogoIds());
-
-        setListAdapter(service_images);
+		// display ad if this is not the pro version
+		Ad ad = new Ad(this);
+		ad.refreshAd();
+		
+		// display list of services
+		ServiceConnectionAdapter adapter = new ServiceConnectionAdapter(this, R.layout.service_connection_row, Services.getInstance(this).getLogoDrawables());
+		setListAdapter(adapter);
+		
+		// set list view properties
         getListView().setTextFilterEnabled(true);
 		getListView().setOnItemClickListener(this);
 		getListView().setBackgroundColor(Color.WHITE);
@@ -180,8 +163,8 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		return result;
 	}
 
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(DialogInterface dialog, int which) 
+	{
 		// TODO Auto-generated method stub
-		
 	}
 }

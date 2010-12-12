@@ -90,56 +90,21 @@ public class Services
 	}
 	
 	/**
-	 * getLogoKeys
-	 * 
-	 * @return String[]
-	 */
-	public String[] getLogoKeys()
-	{
-		String[] keys = new String[services.size()];
-		
-		for (int i = 0; i < keys.length; i++)
-		{
-			keys[i] = services.get(i).getLogo().getKey();
-		}
-		
-		return keys;
-	}
-	
-	/**
 	 * getLogoDrawables
 	 * 
-	 * @return int[]
+	 * @return ArrayList<Integer>
 	 */
-	public int[] getLogoDrawables()
+	public ArrayList<Integer> getLogoDrawables()
 	{
-		int[] drawables = new int[services.size()];
+		ArrayList<Integer> drawables = new ArrayList<Integer>();
 		
-		for (int i = 0; i < drawables.length; i++)
+		for (Service service : services)
 		{
-			drawables[i] = services.get(i).getLogo().getDrawable();
+			drawables.add(service.getLogoDrawable());
 		}
 		
 		return drawables;
 	}
-	
-	/**
-	 * getLogoIds
-	 * 
-	 * @return int[]
-	 */
-	public int[] getLogoIds()
-	{
-		int[] ids = new int[services.size()];
-		
-		for (int i = 0; i < ids.length; i++)
-		{
-			ids[i] = services.get(i).getLogo().getId();
-		}
-		
-		return ids;
-	}
-	
 	
 	/**
 	 * atLeastOneConnected

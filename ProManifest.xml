@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.davidivins.checkin4me"
+	android:versionCode="1"
+	android:versionName="1.0"
+	android:installLocation="auto">
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+	
+	<application android:icon="@drawable/icon" android:label="@string/app_name_pro" android:debuggable="true">
+		<uses-library android:name="com.google.android.maps" />
+		
+		<!-- The application's publisher ID assigned by AdMob -->
+		<meta-data android:value="true" android:name="IS_PRO_VERSION" />
+		<meta-data android:value="true" android:name="ADMOB_ALLOW_LOCATION_FOR_ADS" />
+		
+		<!-- AdMobActivity definition -->
+		<activity android:name="com.admob.android.ads.AdMobActivity" 
+			android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+			android:configChanges="orientation|keyboard|keyboardHidden" />
+			
+		<!-- AdMob - Track Market installs -->
+		<receiver android:name="com.admob.android.ads.analytics.InstallReceiver" android:exported="true">
+			<intent-filter>
+				<action android:name="com.android.vending.INSTALL_REFERRER" />
+			</intent-filter>
+		</receiver>
+		
+		<!-- Analytics - Used for Install Referrer Tracking -->
+		<receiver android:name="com.google.android.apps.analytics.AnalyticsReceiver" android:exported="true">
+			<intent-filter>
+				<action android:name="com.android.vending.INSTALL_REFERRER" />
+			</intent-filter>
+		</receiver>
+	
+		<!-- CheckIn4Me Activity -->
+		<activity android:name=".CheckIn4Me" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		
+		<!-- ServiceConnection Activity -->
+		<activity android:name=".ServiceConnection" android:label="@string/service_connection_title">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+    
+    	<!-- Authorization Activity -->
+    	<activity android:name=".Authorization" android:label="@string/authorization_title">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="checkin4me" android:host="" />
+			</intent-filter>
+		</activity>
+        
+        <!-- NearbyPlaces Activity -->
+		<activity android:name=".NearbyPlaces" android:label="@string/nearby_places_title" android:launchMode="singleTop">
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<meta-data android:name="android.app.searchable" android:resource="@xml/searchable" />
+		</activity>
+		
+		<!-- LocationDetails Activity -->
+		<activity android:name=".LocationDetails" android:label="@string/location_details_title">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+
+	</application>
+</manifest> 

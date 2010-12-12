@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+	android:id="@+id/main_layout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:checkin4me="http://schemas.android.com/apk/res/com.davidivins.checkin4me"
+	android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:orientation="horizontal">
-
-	<ImageView android:id="@+id/servicelogo"
+ 	android:layout_height="fill_parent">
+	
+	<ListView android:id="@+id/android:list"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" 
-		android:scaleType="center" 
-		android:padding="10dp" />
+		android:layout_height="fill_parent" />	
+		
+	<TextView
+		android:id="@+id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/white"
+		android:text="No Services to Connect" 
+		android:textColor="@color/black" />
+		
 </LinearLayout>

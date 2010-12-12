@@ -161,7 +161,7 @@ public class GowallaOAuthConnector implements OAuthConnector
 		try
 		{
 			JSONObject json = new JSONObject(response.getResponseString());			
-			if (json.has("access_token"))
+			if (json.has("access_token") && json.has("refresh_token"))
 				is_successful = true;
 		}
 		catch (Exception e)
@@ -185,8 +185,10 @@ public class GowallaOAuthConnector implements OAuthConnector
 		{
 			JSONObject json = new JSONObject(response.getResponseString());
 			Log.i(TAG, "access_token = " + json.getString("access_token"));
+			Log.i(TAG, "refresh_token = " + json.getString("refresh_token"));
 			
 			settings_editor.putString("gowalla_access_token", json.getString("access_token"));
+			settings_editor.putString("gowalla_refresh_token", json.getString("refresh_token"));
 			settings_editor.commit();
 		}
 		catch (Exception e)

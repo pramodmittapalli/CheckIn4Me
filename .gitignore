@@ -20,4 +20,5 @@
 /gui_prototypes/pdfs/pngs/.DS_Store
 /gen/
 /bin/com/
-/bin/.DS_Store
+/bin/.DS_Store/AndroidManifest.xml
+/AndroidManifest.xml

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 /**
@@ -203,6 +204,7 @@ public class GowallaAPIAdapter implements APIAdapter
 	{
 		private Locale location;
 		private SharedPreferences settings;
+		private boolean token_refresh_attempted;
 		
 		/**
 		 * CheckInThread
@@ -214,6 +216,7 @@ public class GowallaAPIAdapter implements APIAdapter
 		{
 			this.location = location;
 			this.settings = settings;
+			this.token_refresh_attempted = false;
 		}
 
 		/**
@@ -222,6 +225,7 @@ public class GowallaAPIAdapter implements APIAdapter
 		public void run() 
 		{
 			Log.i(TAG, "Checking in with Gowalla");
+			boolean checkin_status = false;
 
 			// build new http request
 			HTTPRequest request = new HTTPRequest(
@@ -249,7 +253,17 @@ public class GowallaAPIAdapter implements APIAdapter
 			
 			// save locations
 			if (response.getSuccessStatus())
-				setStatusFromJson(response.getResponseString());	
+				checkin_status = setStatusFromJson(response.getResponseString());
+			
+			if (token_refresh_attempted == false && checkin_status == false)
+			{
+				token_refresh_attempted = true;
+				
+				if (attemptToRefreshToken())
+					run();
+				else
+					Log.i(TAG, "Token refresh failed.");
+			}
 		}
 		
 		/**
@@ -258,7 +272,7 @@ public class GowallaAPIAdapter implements APIAdapter
 		 * @param json
 		 * @throws JSONException 
 		 */
-		private void setStatusFromJson(String json_string)
+		private boolean setStatusFromJson(String json_string)
 		{
 			// clear latest status
 			latest_checkin_status = false;
@@ -278,6 +292,72 @@ public class GowallaAPIAdapter implements APIAdapter
 				Log.i(TAG, "JSON Exception: " + e.getMessage());
 				Log.i(TAG, "Could not parse json response: " + json_string);
 			}
+			
+			return latest_checkin_status;
+		}
+		
+		/**
+		 * attemptToRefreshToken
+		 */
+		private boolean attemptToRefreshToken()
+		{
+			Log.i(TAG, "Attempting to refresh Gowalla OAuth token");
+			 
+			OAuthResponse response = new OAuthResponse();
+			Log.i(TAG, "refresh_token in settings = " + settings.getString("gowalla_refresh_token", "-1"));
+			
+			if (settings.getString("gowalla_refresh_token", "-1") != "-1")
+			{
+				GowallaOAuthRequest request = new GowallaOAuthRequest(
+						config.getProperty("oauth_http_method"), config.getProperty("oauth_host"), 
+						config.getProperty("oauth_access_token_endpoint"));
+				
+				request.addQueryParameter("grant_type", "refresh_token");
+				request.addQueryParameter("client_id", config.getProperty("oauth_client_id"));
+				request.addQueryParameter("client_secret", config.getProperty("oauth_client_secret"));
+				request.addQueryParameter("refresh_token", settings.getString("gowalla_refresh_token", "-1"));
+				
+				response = (OAuthResponse)request.execute();
+			}
+			else
+			{
+				Log.e(TAG, "Attempting to complete handshake without a code");
+			}
+			
+			return setTokenFromJson(response.getResponseString());
+		 }
+		
+		/**
+		 * setTokenFromJson
+		 */
+		private boolean setTokenFromJson(String json_string)
+		{
+			Editor settings_editor = settings.edit();
+			boolean status = false;
+			
+			try
+			{
+				JSONObject json = new JSONObject(json_string);
+				
+				String access_token = json.getString("access_token");
+				String refresh_token = json.getString("refresh_token");
+				
+				Log.i(TAG, "New Access Token = " + access_token);
+				Log.i(TAG, "New Refresh Token = " + refresh_token);
+				
+				settings_editor.putString("gowalla_access_token", access_token);
+				settings_editor.putString("gowalla_refresh_token", refresh_token);
+				settings_editor.commit();
+
+				status = true;
+			}
+			catch (JSONException e)
+			{
+				Log.i(TAG, "JSON Exception: " + e.getMessage());
+				Log.i(TAG, "Could not parse json response: " + json_string);
+			}
+			
+			return status;
 		}
 	}
 }

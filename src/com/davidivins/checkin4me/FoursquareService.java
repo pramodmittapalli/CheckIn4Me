@@ -17,7 +17,6 @@ public class FoursquareService implements Service
 	private static final String TAG = "FoursquareService";
 	
 	private Properties config;
-	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
 	private APIAdapter api_adapter;
 	private int service_id;
@@ -30,9 +29,7 @@ public class FoursquareService implements Service
 	public FoursquareService(Resources resources, int service_id)
 	{
 		this.service_id = service_id;
-		
 		config = new Properties();
-		logo = new FoursquareLogo("servicelogo", R.drawable.foursquare_logo_resized, R.id.servicelogo);
 		
 		try 
 		{
@@ -71,13 +68,13 @@ public class FoursquareService implements Service
 	}
 	
 	/**
-	 * getLogo
+	 * getLogoDrawable
 	 * 
-	 * @return DrawableListItem
+	 * @return int
 	 */
-	public DrawableListItem getLogo()
+	public int getLogoDrawable()
 	{
-		return logo;
+		return R.drawable.foursquare_logo_resized;
 	}
 	
 	/**

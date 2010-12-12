@@ -16,7 +16,6 @@ public class GowallaService implements Service
 {
 	private static final String TAG = "GowallaService";
 	private Properties config;
-	private DrawableListItem logo;
 	private OAuthConnector oauth_connector;
 	private APIAdapter api_adapter;
 	private int service_id;
@@ -29,9 +28,7 @@ public class GowallaService implements Service
 	public GowallaService(Resources resources, int service_id)
 	{
 		this.service_id = service_id;
-		
 		config = new Properties();
-		logo = new FoursquareLogo("servicelogo", R.drawable.gowalla_logo_resized, R.id.servicelogo);
 		
 		try 
 		{
@@ -68,13 +65,13 @@ public class GowallaService implements Service
 	}
 	
 	/**
-	 * getLogo
+	 * getLogoDrawable
 	 * 
-	 * @return DrawableListItem
+	 * @return int
 	 */
-	public DrawableListItem getLogo()
+	public int getLogoDrawable()
 	{
-		return logo;
+		return R.drawable.gowalla_logo_resized;
 	}
 	
 	/**

@@ -72,7 +72,13 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 	public void onCreate(Bundle saved_instance_state)
 	{
 		super.onCreate(saved_instance_state);
+		
+		// set the layout for the current activity
 		setContentView(R.layout.location_details);
+		
+		// display ad if this is not the pro version
+		Ad ad = new Ad(this);
+		ad.refreshAd();
 		
 		// get map config file if necessary
 		if (config == null)

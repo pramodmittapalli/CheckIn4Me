@@ -11,7 +11,7 @@ public interface Service
 {
 	abstract public int getId();
 	abstract public String getName();
-	abstract public DrawableListItem getLogo();
+	abstract public int getLogoDrawable();
 	abstract public int getIconDrawable();
 	abstract public OAuthConnector getOAuthConnector();
 	abstract public APIAdapter getAPIAdapter();

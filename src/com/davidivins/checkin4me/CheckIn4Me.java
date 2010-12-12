@@ -1,10 +1,10 @@
 package com.davidivins.checkin4me;
 
+import com.google.android.apps.analytics.GoogleAnalyticsTracker;
+
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 
 /**
  * CheckIn4Me
@@ -14,7 +14,7 @@ import android.preference.PreferenceManager;
 public class CheckIn4Me extends Activity
 {
 	private Handler handler = new Handler();
-	private StartProgram program = null;
+	private StartProgramDelayer program = null;
 	
 	/**
 	 * onCreate
@@ -26,6 +26,13 @@ public class CheckIn4Me extends Activity
 	{
 		super.onCreate(saved_instance_state);
 		setContentView(R.layout.checkin4me);
+		
+		Analytics analytics = new Analytics(this);
+		GoogleAnalyticsTracker tracker = analytics.getTracker();
+        tracker.trackPageView("/checkin4me");
+        tracker.dispatch();
+        tracker.stop();
+		
 		runProgram();
 	}
 	
@@ -51,7 +58,7 @@ public class CheckIn4Me extends Activity
 		{
 			handler.removeCallbacks(program);
 			program = null;
-		}
+		}		
 	}
 	
 	/**
@@ -60,44 +67,8 @@ public class CheckIn4Me extends Activity
 	private void runProgram()
 	{
 		if (program == null)
-			program = new StartProgram(this);
+			program = new StartProgramDelayer(this);
 		
 		handler.postDelayed(program, 2000);
-	}
-	
-	/**
-	 * StartProgram
-	 * 
-	 * @author david
-	 */
-	class StartProgram implements Runnable
-	{
-		private Activity activity;
-		
-		/**
-		 * StartProgram
-		 * 
-		 * @param activity
-		 */
-		StartProgram(Activity activity)
-		{
-			this.activity = activity;
-		}
-
-		/**
-		 * run
-		 */
-		public void run() 
-		{
-			Intent intent;
-			
-			// go straight to nearby places if atleast one service is connected
-			if (Services.getInstance(activity).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(activity)))
-				intent = new Intent(activity, NearbyPlaces.class);
-			else
-				intent = new Intent(activity, ServiceConnection.class);
-			
-			startActivity(intent);
-		}
 	}
 }
