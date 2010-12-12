@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use strict;
+use strict; 
 
 my $dir = "/Users/david/Documents/Projects/Repositories/checkin4me/CheckIn4me";
 
