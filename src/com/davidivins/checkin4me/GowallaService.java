@@ -32,7 +32,7 @@ public class GowallaService implements Service
 		
 		try 
 		{
-			InputStream config_file = resources.openRawResource(R.raw.gowalla);
+			InputStream config_file = resources.openRawResource(GeneratedResources.getRaw("gowalla"));
 			config.load(config_file);
 			
 			oauth_connector = new GowallaOAuthConnector(config);
@@ -71,7 +71,7 @@ public class GowallaService implements Service
 	 */
 	public int getLogoDrawable()
 	{
-		return R.drawable.gowalla_logo_resized;
+		return GeneratedResources.getDrawable("gowalla_logo_resized"); 
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class GowallaService implements Service
 	 */
 	public int getIconDrawable()
 	{
-		return R.drawable.gowalla25x25;
+		return GeneratedResources.getDrawable("gowalla25x25");
 	}
 
 	/**

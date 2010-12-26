@@ -33,7 +33,9 @@ public class Services
 		services = new ArrayList<Service>();
 		services.add(new FoursquareService(resources, service_count++));
 		services.add(new GowallaService(resources, service_count++));
-		services.add(new BrightkiteService(resources, service_count++));	
+		
+		// add debug conditional here.
+		//services.add(new BrightkiteService(resources, service_count++));	
 	}
 	
 	/**

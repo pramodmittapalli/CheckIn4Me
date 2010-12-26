@@ -30,7 +30,7 @@ public class BrightkiteService implements Service
 		
 		try 
 		{
-			InputStream config_file = resources.openRawResource(R.raw.brightkite);
+			InputStream config_file = resources.openRawResource(GeneratedResources.getRaw("brightkite"));
 			config.load(config_file);
 		} 
 		catch (Exception e) 
@@ -66,7 +66,7 @@ public class BrightkiteService implements Service
 	 */
 	public int getLogoDrawable()
 	{
-		return R.drawable.brightkite_logo_resized;
+		return GeneratedResources.getDrawable("brightkite_logo_resized"); 
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class BrightkiteService implements Service
 	 */
 	public int getIconDrawable()
 	{
-		return R.drawable.brightkite25x25;
+		return GeneratedResources.getDrawable("brightkite25x25");
 	}
 
 	/**

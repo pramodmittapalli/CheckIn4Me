@@ -3,6 +3,7 @@ package com.davidivins.checkin4me;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -75,8 +76,8 @@ class ServiceCheckListAdapter extends ArrayAdapter<Service> implements OnChecked
 		
 		if (service != null) 
 		{
-			LinearLayout icon_and_name_layout = (LinearLayout)view.findViewById(R.id.service_icon_and_name);
-			LinearLayout check_box_layout = (LinearLayout)view.findViewById(R.id.service_checkbox);
+			LinearLayout icon_and_name_layout = (LinearLayout)view.findViewById(GeneratedResources.getId("service_icon_and_name"));
+			LinearLayout check_box_layout = (LinearLayout)view.findViewById(GeneratedResources.getId("service_checkbox"));
 			
 			icon_and_name_layout.removeAllViews();
 			check_box_layout.removeAllViews();

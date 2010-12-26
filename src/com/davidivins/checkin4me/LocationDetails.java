@@ -74,7 +74,7 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		super.onCreate(saved_instance_state);
 		
 		// set the layout for the current activity
-		setContentView(R.layout.location_details);
+		setContentView(GeneratedResources.getLayout("location_details"));
 		
 		// display ad if this is not the pro version
 		Ad ad = new Ad(this);
@@ -87,7 +87,7 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		
 			try 
 			{
-				InputStream config_file = getResources().openRawResource(R.raw.google_maps);
+				InputStream config_file = getResources().openRawResource(GeneratedResources.getRaw("google_maps"));
 				config.load(config_file);
 			} 
 			catch (Exception e) 
@@ -107,10 +107,10 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		// 
 		// location name and address
 		//
-		TextView location_name = (TextView)findViewById(R.id.location_name);
+		TextView location_name = (TextView)findViewById(GeneratedResources.getId("location_name"));
 		location_name.setText(current_location.getName());
 		
-		TextView location_description = (TextView)findViewById(R.id.location_description);
+		TextView location_description = (TextView)findViewById(GeneratedResources.getId("location_description"));
 		location_description.setText(current_location.getAddress());
 		
 		//
@@ -141,13 +141,13 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		map_controller.setCenter(location_point);
 		map_controller.setZoom(15);
 		
-		LinearLayout map_layout = (LinearLayout)findViewById(R.id.location_map);
+		LinearLayout map_layout = (LinearLayout)findViewById(GeneratedResources.getId("location_map"));
 		map_layout.addView(location_map);
 		
 		//
 		// list stuff
 		//
-		ListView list_view = (ListView)findViewById(R.id.location_service_list);
+		ListView list_view = (ListView)findViewById(GeneratedResources.getId("location_service_list"));
 		list_view.setTextFilterEnabled(true);
 		list_view.setBackgroundColor(Color.WHITE);
 		list_view.setCacheColorHint(Color.WHITE);
@@ -162,13 +162,13 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 			services.add(Services.getInstance(this).getServiceById(service_id));
 		}
 		
-		ServiceCheckListAdapter adapter = new ServiceCheckListAdapter(this, R.layout.location_details_row, services);
+		ServiceCheckListAdapter adapter = new ServiceCheckListAdapter(this, GeneratedResources.getLayout("location_details_row"), services);
 		list_view.setAdapter(adapter);
 		
 		// 
 		// button stuff
 		//
-		Button button = (Button)findViewById(R.id.check_in_button);
+		Button button = (Button)findViewById(GeneratedResources.getId("check_in_button"));
 		button.setOnClickListener(this);
 	}
 	
@@ -196,7 +196,7 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 			checking_in_dialog.cancel();
 		
 		// get list and adapter
-		ListView list_view = (ListView)findViewById(R.id.location_service_list);
+		ListView list_view = (ListView)findViewById(GeneratedResources.getId("location_service_list"));
 		ServiceCheckListAdapter adapter = (ServiceCheckListAdapter)list_view.getAdapter();
 		
 		// retrieve services that were checked
@@ -239,8 +239,9 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		
 		// retrieve layout inflater
 		LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-		View layout = inflater.inflate(R.layout.checkin_dialog, (ViewGroup)findViewById(R.id.checkin_root));
-		LinearLayout checkin_root_dialog = (LinearLayout)layout.findViewById(R.id.checkin_root);
+		View layout = inflater.inflate(GeneratedResources.getLayout("checkin_dialog"), 
+				(ViewGroup)findViewById(GeneratedResources.getId("checkin_root")));
+		LinearLayout checkin_root_dialog = (LinearLayout)layout.findViewById(GeneratedResources.getId("checkin_root"));
 
 		// add service icons to layout
 		LinearLayout successful_images = new LinearLayout(this);
@@ -306,17 +307,17 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		// set title/icon based on success or failure
 		if (some_succeeded && some_failed) // some check-ins failed and some check-ins succeeded
 		{
-			alertDialog.setIcon(R.drawable.warning);
+			alertDialog.setIcon(GeneratedResources.getDrawable("warning"));
 			alertDialog.setTitle("Check-in Results Mixed!");
 		}
 		else if (some_failed) // all check-ins failed
 		{
-			alertDialog.setIcon(R.drawable.x);
+			alertDialog.setIcon(GeneratedResources.getDrawable("x"));
 			alertDialog.setTitle("Check-in Failed!");
 		}
 		else // all check-ins succeeded
 		{
-			alertDialog.setIcon(R.drawable.check);
+			alertDialog.setIcon(GeneratedResources.getDrawable("check"));
 			alertDialog.setTitle("Check-in Successful!");
 		}
 		
@@ -409,8 +410,8 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 			checkin_statuses.clear();
 			
 			// mock return statuses
-//			checkin_statuses.put(0, false);
-//			checkin_statuses.put(1, true);
+			//checkin_statuses.put(0, false);
+			//checkin_statuses.put(1, true);
 			
 			checkin_statuses = Services.getInstance(activity).checkIn(service_ids, location, settings);
 			

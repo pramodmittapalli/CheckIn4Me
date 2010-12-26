@@ -30,7 +30,7 @@ public class Analytics
 		
 		try 
 		{
-			InputStream config_file = activity.getResources().openRawResource(R.raw.analytics);
+			InputStream config_file = activity.getResources().openRawResource(GeneratedResources.getRaw("analytics"));
 			config.load(config_file);
 			
 			tracker = GoogleAnalyticsTracker.getInstance();

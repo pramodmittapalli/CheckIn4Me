@@ -101,8 +101,9 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		super.onStop();
 		
 		// stop the gps when pausing the activity
-		if (location_manager != null)
-			location_manager.removeUpdates(this);
+		if (location_manager == null)
+			location_manager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+		location_manager.removeUpdates(this);
 		
 		// cancel any dialogs showing
 		if (loading_dialog != null && loading_dialog.isShowing())
@@ -154,7 +155,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		
 		requestCoordinates();
 
-		setContentView(R.layout.nearby_places);
+		setContentView(GeneratedResources.getLayout("nearby_places"));
 		
 		getListView().setTextFilterEnabled(true);
 		getListView().setOnItemClickListener(this);
@@ -287,7 +288,8 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		Log.i(TAG, "received new location data.");
 		
 		// setup list for retrieved locations
-		LocaleAdapter adapter = new LocaleAdapter(this, R.layout.nearby_place_row, locations_runnable.getLocationsRetrieved());
+		LocaleAdapter adapter = new LocaleAdapter(
+				this, GeneratedResources.getLayout("nearby_place_row"), locations_runnable.getLocationsRetrieved());
 		setListAdapter(adapter);
 		
 		// cancel loading dialog
@@ -327,7 +329,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	public boolean onCreateOptionsMenu(Menu menu) 
 	{
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.nearby_places, menu);
+		inflater.inflate(GeneratedResources.getMenu("nearby_places"), menu);
 		return true;
 	}
 	
@@ -339,23 +341,27 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) 
 	{
-		boolean result = false;
+		boolean result = false;		
+		int id = item.getItemId();
 		
-		// Handle item selection
-		switch (item.getItemId()) 
+		if (GeneratedResources.getId("connect_services") == id)
 		{
-			case R.id.connect_services:
-				startActivity(new Intent(this, ServiceConnection.class));
-				result = true;
-				break;
-			case R.id.refresh:
-				requestCoordinates();
-				break;
-			case R.id.search:
-				onSearchRequested();
-				break;
-			default:
-				// do nothing
+			startActivity(new Intent(this, ServiceConnection.class));
+			result = true;
+		}
+		else if (GeneratedResources.getId("refresh") == id)
+		{
+			requestCoordinates();
+			result = true;
+		}
+		else if (GeneratedResources.getId("search") == id)
+		{
+			onSearchRequested();
+			result = true;
+		}
+		else
+		{
+			// do nothing
 		}
 		
 		return result;

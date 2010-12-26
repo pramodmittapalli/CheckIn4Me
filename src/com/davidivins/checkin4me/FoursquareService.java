@@ -33,7 +33,7 @@ public class FoursquareService implements Service
 		
 		try 
 		{
-			InputStream config_file = resources.openRawResource(R.raw.foursquare);
+			InputStream config_file = resources.openRawResource(GeneratedResources.getRaw("foursquare"));
 			config.load(config_file);
 			
 			// create oauth connector with current configuration
@@ -74,7 +74,7 @@ public class FoursquareService implements Service
 	 */
 	public int getLogoDrawable()
 	{
-		return R.drawable.foursquare_logo_resized;
+		return GeneratedResources.getDrawable("foursquare_logo_resized");
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class FoursquareService implements Service
 	 */
 	public int getIconDrawable()
 	{
-		return R.drawable.foursquare25x25;
+		return GeneratedResources.getDrawable("foursquare25x25");
 	}
 
 	/**

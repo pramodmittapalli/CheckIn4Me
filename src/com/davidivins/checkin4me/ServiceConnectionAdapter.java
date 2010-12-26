@@ -63,7 +63,7 @@ class ServiceConnectionAdapter extends ArrayAdapter<Integer>
 		// items set blocks list from getting messed up on scrolling
 		if (logo != null) 
 		{
-			LinearLayout row = (LinearLayout)view.findViewById(R.id.service_connection_logo);
+			LinearLayout row = (LinearLayout)view.findViewById(GeneratedResources.getId("service_connection_logo"));
 			row.removeAllViews(); // <-- this thing is pretty effing important...wasted hours on this...
 			
 			ImageView icon = new ImageView(parent.getContext());

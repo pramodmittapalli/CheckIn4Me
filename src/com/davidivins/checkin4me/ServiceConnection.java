@@ -38,14 +38,14 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		super.onCreate(saved_instance_state);
 
 		// set the current layout for the activity
-		setContentView(R.layout.service_connection);
+		setContentView(GeneratedResources.getLayout("service_connection"));
 		
 		// display ad if this is not the pro version
 		Ad ad = new Ad(this);
 		ad.refreshAd();
 		
 		// display list of services
-		ServiceConnectionAdapter adapter = new ServiceConnectionAdapter(this, R.layout.service_connection_row, Services.getInstance(this).getLogoDrawables());
+		ServiceConnectionAdapter adapter = new ServiceConnectionAdapter(this, GeneratedResources.getLayout("service_connection_row"), Services.getInstance(this).getLogoDrawables());
 		setListAdapter(adapter);
 		
 		// set list view properties
@@ -131,7 +131,7 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		if (Services.getInstance(this).atLeastOneConnected(PreferenceManager.getDefaultSharedPreferences(this)))
 		{
 			MenuInflater inflater = getMenuInflater();
-			inflater.inflate(R.menu.service_connection, menu);
+			inflater.inflate(GeneratedResources.getMenu("service_connection"), menu);
 			result = true;
 		}
 		
@@ -150,14 +150,11 @@ public class ServiceConnection extends ListActivity implements OnItemClickListen
 		boolean result = false;
 		
 		// Handle item selection
-		switch (item.getItemId()) 
+		if (item.getItemId() == GeneratedResources.getId("nearby_places"))
 		{
-			case R.id.nearby_places:
 				Intent i = new Intent(this, NearbyPlaces.class);
 				startActivity(i);
 				result = true;
-			default:
-				result = false;
 		}
 		
 		return result;

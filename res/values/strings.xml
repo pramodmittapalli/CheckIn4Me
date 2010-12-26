@@ -3,6 +3,7 @@
 	<string name="app_name">CheckIn4Me</string>
 	<string name="app_name_pro">CheckIn4Me Pro</string>
 	<string name="app_name_free">CheckIn4Me Free</string>
+	<string name="app_name_debug">CheckIn4Me Debug</string>
 	
 	<string name="service_connection_title">Connect Services</string>
 	<string name="authorization_title">Authorization</string>

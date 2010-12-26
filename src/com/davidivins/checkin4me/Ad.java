@@ -70,7 +70,7 @@ public class Ad
 			
 			try 
 			{
-				InputStream config_file = activity.getResources().openRawResource(R.raw.admob);
+				InputStream config_file = activity.getResources().openRawResource(GeneratedResources.getRaw("admob"));
 				config.load(config_file);
 			} 
 			catch (Exception e) 
@@ -88,7 +88,8 @@ public class Ad
 		if (null == meta_data || !meta_data.getBoolean("IS_PRO_VERSION", false))
 		{
 			AdView ad = new AdView(activity);
-			LinearLayout main_layout = (LinearLayout)activity.findViewById(R.id.main_layout);
+			
+			LinearLayout main_layout = (LinearLayout)activity.findViewById(GeneratedResources.getId("main_layout"));
 			
 			if (null != main_layout)
 			{

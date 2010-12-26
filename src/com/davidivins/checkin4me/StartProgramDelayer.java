@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
  * 
  * @author david
  */
-class StartProgramDelayer implements Runnable
+public class StartProgramDelayer implements Runnable
 {
 	private Activity activity;
 	
@@ -18,7 +18,7 @@ class StartProgramDelayer implements Runnable
 	 * 
 	 * @param activity
 	 */
-	StartProgramDelayer(Activity activity)
+	public StartProgramDelayer(Activity activity)
 	{
 		this.activity = activity;
 	}

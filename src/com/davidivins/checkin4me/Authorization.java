@@ -28,7 +28,11 @@ public class Authorization extends Activity
 	public void onCreate(Bundle saved_instance_state)
 	{
 		super.onCreate(saved_instance_state);
-		setContentView(R.layout.authorization);
+		
+		if (GeneratedResources.areNotGenerated())
+			GeneratedResources.generate(this);
+		
+		setContentView(GeneratedResources.getLayout("authorization"));
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);

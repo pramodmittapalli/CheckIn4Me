@@ -67,7 +67,7 @@ class LocaleAdapter extends ArrayAdapter<Locale>
 		// items set blocks list from getting messed up on scrolling
 		if (location != null) 
 		{
-			LinearLayout row = (LinearLayout)view.findViewById(R.id.nearby_place);
+			LinearLayout row = (LinearLayout)view.findViewById(GeneratedResources.getId("nearby_place"));
 			row.removeAllViews(); // <-- this thing is pretty effing important...wasted hours on this...
 			
 			LinearLayout text_line = new LinearLayout(parent.getContext());
