@@ -18,12 +18,12 @@ public class ParsedGeneratedResources implements GeneratedResourcesInterface
 		
 		try
 		{                    
-			Class r_class = Class.forName(class_name);
-			Class[] r_classes = r_class.getClasses();
+			Class<?> r_class = Class.forName(class_name);
+			Class<?>[] r_classes = r_class.getClasses();
 	            
-			for (Class current_class : r_classes)
+			for (Class<?> current_class : r_classes)
 			{
-				HashMap current_class_fields = new HashMap<String, Integer>();
+				HashMap<String, Integer> current_class_fields = new HashMap<String, Integer>();
 				Field[] fields = current_class.getDeclaredFields();
 				
 				String[] current_class_name = current_class.getName().split("\\.");

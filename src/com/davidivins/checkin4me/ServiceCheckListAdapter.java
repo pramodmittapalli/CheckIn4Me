@@ -3,7 +3,6 @@ package com.davidivins.checkin4me;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import android.R;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
