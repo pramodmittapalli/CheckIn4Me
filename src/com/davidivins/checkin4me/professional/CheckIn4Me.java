@@ -1,4 +1,4 @@
-package com.davidivins.checkin4me.pro;
+package com.davidivins.checkin4me.professional;
 
 import com.davidivins.checkin4me.*;
 
@@ -28,7 +28,6 @@ public class CheckIn4Me extends Activity
 	{
 		super.onCreate(saved_instance_state);
 		
-		// nullptrexception on return from browser to authorization.  must fix by saving R string being used in prefs.
 		GeneratedResources.generate(this);
 		
 		setContentView(GeneratedResources.getLayout("checkin4me"));

@@ -10,6 +10,7 @@ public class GeneratedResources
 {
 	private static final String TAG = "GeneratedResources";
 	private static GeneratedResourcesInterface generated_resources;
+	private static String version;
 	
 	private GeneratedResources() { }
 	
@@ -31,7 +32,7 @@ public class GeneratedResources
 		if (null != meta_data)
 		{
 			// assume pro, don't want to screw up paying customers
-			String version = (meta_data.getString("VERSION") == null) ? "pro" : meta_data.getString("VERSION");			
+			version = (meta_data.getString("VERSION") == null) ? "professional" : meta_data.getString("VERSION");			
 			String class_name = "com.davidivins.checkin4me." + version + ".R";
 			
 			generated_resources = new ParsedGeneratedResources(class_name);
@@ -45,6 +46,11 @@ public class GeneratedResources
 	public static boolean areNotGenerated()
 	{
 		return (null == generated_resources) ? true : false;
+	}
+	
+	public static String getVersion()
+	{
+		return version;
 	}
 	
 	public static final int getAttr(String name)

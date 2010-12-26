@@ -116,7 +116,7 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		//
 		// map stuff
 		//
-		MapView location_map = new MapView(this, config.getProperty("api_key"));
+		MapView location_map = new MapView(this, config.getProperty(GeneratedResources.getVersion() + "_api_key"));
 		location_map.setClickable(true);
 		
 		List<Overlay> map_overlays = location_map.getOverlays();

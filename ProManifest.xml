@@ -3,9 +3,9 @@
  ***  PRO VERSION  *** 
  -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.davidivins.checkin4me.pro"
-	android:versionCode="1"
-	android:versionName="0.0"
+	package="com.davidivins.checkin4me.professional"
+	android:versionCode="2"
+	android:versionName="1.1"
 	android:installLocation="auto">
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -17,7 +17,7 @@
 		<uses-library android:name="com.google.android.maps" />
 		
 		<!-- The application's publisher ID assigned by AdMob -->
-		<meta-data android:value="pro" android:name="VERSION" />
+		<meta-data android:value="professional" android:name="VERSION" />
 		<meta-data android:value="true" android:name="IS_PRO_VERSION" />
 		<meta-data android:value="true" android:name="ADMOB_ALLOW_LOCATION_FOR_ADS" />
 		
