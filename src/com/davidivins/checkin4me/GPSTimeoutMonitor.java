@@ -31,6 +31,16 @@ public class GPSTimeoutMonitor implements Runnable
 	public void run()
 	{
 		SystemClock.sleep(FIFTHTEEN_SECONDS);
-		handler.post(activity.getGPSTimeoutCallback());
+		
+		if (null != handler)
+			handler.post(activity.getGPSTimeoutCallback());
+	}
+	
+	/**
+	 * destroyHandler
+	 */
+	public void destroyHandler()
+	{
+		handler = null;
 	}
 }

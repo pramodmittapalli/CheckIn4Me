@@ -46,10 +46,20 @@ public class Ad
 		{
 			initializeConfig();
 		
-			AdManager.setTestDevices(new String[] { 
-					AdManager.TEST_EMULATOR,
-					config.getProperty("test_phone_id", "")
-				});
+			if (meta_data.getString("VERSION").equals("debug"))
+			{
+				AdManager.setTestDevices(new String[] { 
+						AdManager.TEST_EMULATOR,
+						config.getProperty("test_phone_id", "")
+					});
+			}
+			else
+			{
+				AdManager.setTestDevices(new String[] { 
+						AdManager.TEST_EMULATOR
+						//,config.getProperty("test_phone_id", "")
+					});
+			}
 		
 			AdManager.setPublisherId(config.getProperty("publisher_id", "-1"));
 		}

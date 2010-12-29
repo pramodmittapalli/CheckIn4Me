@@ -31,6 +31,16 @@ public class NetworkTimeoutMonitor implements Runnable
 	public void run()
 	{
 		SystemClock.sleep(FIFTHTEEN_SECONDS);
-		handler.post(activity.getNetworkTimeoutCallback());
+		
+		if (null != handler)
+			handler.post(activity.getNetworkTimeoutCallback());
+	}
+	
+	/**
+	 * destroyHandler
+	 */
+	public void destroyHandler()
+	{
+		handler = null;
 	}
 }

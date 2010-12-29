@@ -42,7 +42,8 @@ import android.widget.Toast;
  * 
  * @author david ivins
  */
-public class LocationDetails extends MapActivity implements OnClickListener, DialogInterface.OnClickListener
+public class LocationDetails extends MapActivity 
+	implements OnClickListener, DialogInterface.OnClickListener, CleanableProgressDialogListener
 {
 	private static final String TAG = "LocationDetails";
 	private static Properties config = null;
@@ -55,7 +56,7 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 	private Thread checkin_thread;
 	
 	// acts as callback from thread
-	final Runnable processCheckIn = new Runnable() 
+	private Runnable process_check_in = new Runnable() 
 	{
 		public void run() 
 		{
@@ -175,15 +176,13 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 	/**
 	 * onStop
 	 */
+	@Override
 	public void onStop()
 	{
 		super.onStop();
-		
-		// cancel any dialogs showing
-		if (checking_in_dialog != null && checking_in_dialog.isShowing())
-			checking_in_dialog.cancel();
+		cleanUp();
 	}
-
+	
 	/**
 	 * onClick
 	 * 
@@ -218,13 +217,47 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 		}
 		else
 		{		
-			checking_in_dialog = ProgressDialog.show(this, "", "Checking in...", true);
+			checking_in_dialog = new CleanableProgressDialog(this, this, "", "Checking in...", true);
+			checking_in_dialog.show();
 			
 			// create and start check-in thread
 			SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 			checkin_thread = new Thread(new CheckInThread(this, service_ids, current_location, settings), "CheckinThread");
 			checkin_thread.start();
 		}
+	}
+	
+	/**
+	 * onDialogInterruptedByBackButton
+	 */
+	public void onDialogInterruptedByBackButton() 
+	{
+		cleanUp();
+	}
+
+	/**
+	 * onDialogInterruptedBySearchButton
+	 */
+	public void onDialogInterruptedBySearchButton() 
+	{
+		cleanUp();
+	}
+	
+	/**
+	 * cleanUp
+	 */
+	private void cleanUp()
+	{
+		// cancel thread
+		if (null != checkin_thread)
+		{
+			handler.removeCallbacks(process_check_in);
+			process_check_in = null;
+		}	
+		
+		// cancel any dialogs showing
+		if (checking_in_dialog != null && checking_in_dialog.isShowing())
+			checking_in_dialog.cancel();
 	}
 	
 	/**
@@ -415,7 +448,7 @@ public class LocationDetails extends MapActivity implements OnClickListener, Dia
 			
 			checkin_statuses = Services.getInstance(activity).checkIn(service_ids, location, settings);
 			
-			handler.post(processCheckIn);
+			handler.post(process_check_in);
 		}
 	}
 }

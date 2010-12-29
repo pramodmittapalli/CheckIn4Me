@@ -28,53 +28,28 @@ import android.widget.AdapterView.OnItemClickListener;
  * 
  * @author david ivins
  */
-public class NearbyPlaces extends ListActivity implements LocationListener, OnItemClickListener, LocationsRetrieverListener, GPSTimeoutListener, NetworkTimeoutListener
+public class NearbyPlaces extends ListActivity 
+	implements LocationListener, OnItemClickListener, LocationsRetrieverListener, GPSTimeoutListener, NetworkTimeoutListener, CleanableProgressDialogListener
 {
 	private static final String TAG = "NearbyPlaces";
 	
-	private static LocationManager location_manager = null;
-	private static ProgressDialog loading_dialog = null;
-	
+	private static LocationManager location_manager        = null;
+	private static ProgressDialog loading_dialog           = null;
+	private String current_query                           = null;
+	private Thread locations_thread                        = null;
+	private Thread gps_timeout_thread                      = null;
+	private Thread network_timeout_thread                  = null;
+	private LocationsRetriever locations_runnable          = null;
+	private GPSTimeoutMonitor gps_timeout_runnable         = null;
+	private NetworkTimeoutMonitor network_timeout_runnable = null;
+	private Runnable locations_retrieved_callback          = null;
+	private Runnable gps_timeout_callback                  = null;
+	private Runnable network_timeout_callback              = null;
+	private Handler handler                                = null;
+	private boolean timeouts_cancelled                     = false;
 	private String current_longitude;
 	private String current_latitude;
-	
-	private String current_query = null;
-	
-	private final Handler handler = new Handler(); 
-	
-	private LocationsRetriever locations_runnable = null;
-	
-	boolean timeouts_cancelled = false;
-	
-	// acts as callback from locations thread
-	private final Runnable locations_retrieved_callback = new Runnable() 
-	{
-		public void run() 
-		{
-			newLocationsAvailable();
-		}
-	};
-	
-	// acts as callback from gps thread
-	private final Runnable gps_timeout_callback = new Runnable()
-	{
-		public void run()
-		{
-			if (!timeouts_cancelled)
-				GPSTimeout();
-		}
-	};
-	
-	// acts as callback from network thread
-	private final Runnable network_timeout_callback = new Runnable()
-	{
-		public void run()
-		{
-			if (!timeouts_cancelled)
-				NetworkTimeout();
-		}
-	};
-	
+
 	/**
 	 * onCreate
 	 * 
@@ -84,7 +59,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	public void onCreate(Bundle saved_instance_state)
 	{
 		super.onCreate(saved_instance_state);
-		
+
 		// handle the current intent of this activity
 		handleIntent(getIntent());
 		
@@ -99,11 +74,101 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	public void onStop()
 	{
 		super.onStop();
+		cleanUp();
+	}
+	
+	/**
+	 * setup
+	 */
+	private void setup()
+	{
+		if (null == handler)
+			handler = new Handler();
 		
+		// acts as callback from locations thread
+		if (null == locations_retrieved_callback)
+		{
+			locations_retrieved_callback = new Runnable() 
+			{
+				public void run() 
+				{
+					newLocationsAvailable();
+				}
+			};
+		}
+		
+		// acts as callback from gps thread
+		if (null == gps_timeout_callback)
+		{
+			gps_timeout_callback = new Runnable()
+			{
+				public void run()
+				{
+					if (!timeouts_cancelled)
+						GPSTimeout();
+				}
+			};
+		}
+		
+		// acts as callback from network thread
+		if (null == network_timeout_callback)
+		{
+			network_timeout_callback = new Runnable()
+			{
+				public void run()
+				{
+					if (!timeouts_cancelled)
+						NetworkTimeout();
+				}
+			};
+		}
+	}
+	
+	/**
+	 * cleanUp
+	 */
+	private void cleanUp()
+	{
 		// stop the gps when pausing the activity
 		if (location_manager == null)
 			location_manager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 		location_manager.removeUpdates(this);
+		
+		// cancel threads		
+		if (null != locations_thread)
+		{
+			if (null != handler)
+				handler.removeCallbacks(locations_retrieved_callback);
+			
+			if (null != locations_runnable)
+				locations_runnable.destroyHandler();
+			
+			locations_retrieved_callback = null;
+		}
+		
+		if (null != gps_timeout_thread)
+		{
+			if (null != handler)
+				handler.removeCallbacks(gps_timeout_callback);
+			
+			if (null != gps_timeout_runnable)
+				gps_timeout_runnable.destroyHandler();
+			gps_timeout_callback = null;
+		}
+		
+		if (null != network_timeout_thread)
+		{
+			if (null != handler)
+				handler.removeCallbacks(network_timeout_callback);
+			
+			if (null != network_timeout_runnable)
+				network_timeout_runnable.destroyHandler();
+			
+			network_timeout_callback = null;
+		}
+		
+		if (null != handler)
+			handler = null;
 		
 		// cancel any dialogs showing
 		if (loading_dialog != null && loading_dialog.isShowing())
@@ -180,8 +245,9 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 			loading_dialog.cancel();
 
 		// start retrieving locations dialog
-		loading_dialog = ProgressDialog.show(this, "", "Retrieving Service Locations...", true);
-    	
+		loading_dialog = new CleanableProgressDialog(this, this, "", "Retrieving Service Locations...", true);
+		loading_dialog.show();
+		
 		// get longitude and latitude
 		current_longitude = Double.toString(location.getLongitude());
 		current_latitude = Double.toString(location.getLatitude());
@@ -196,7 +262,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		settings_editor.commit();
 		
 		locations_runnable = new LocationsRetriever(this, this, handler, current_query, current_longitude, current_latitude, settings);
-		Thread locations_thread = new Thread(locations_runnable, "LocationThread");
+		locations_thread = new Thread(locations_runnable, "LocationThread");
 		locations_thread.start();
 	}
 
@@ -212,6 +278,7 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 	 */
 	public void requestCoordinates()
 	{
+		setup();
 		timeouts_cancelled = false;
 		
 		// cancel acquiring location dialog
@@ -223,12 +290,14 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 			location_manager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
 		// start timeout thread for gps coordinates
-		Thread gps_timeout_monitor = new Thread(new GPSTimeoutMonitor(this, handler), "GPSTimeoutMonitor");
-		gps_timeout_monitor.start();
+		gps_timeout_runnable = new GPSTimeoutMonitor(this, handler);
+		gps_timeout_thread = new Thread(gps_timeout_runnable, "GPSTimeoutMonitor");
+		gps_timeout_thread.start();
 				
 		// Register the listener with the Location Manager to receive location updates
 		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
-		loading_dialog = ProgressDialog.show(this, "", "Acquiring GPS Location...", true);
+		loading_dialog = new CleanableProgressDialog(this, this, "", "Acquiring GPS Location...", true);
+		loading_dialog.show();
 	}
 
 	
@@ -251,15 +320,17 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 			location_manager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 		
 		// start network location timeout
-		Thread network_timeout_monitor = new Thread(new NetworkTimeoutMonitor(this, handler), "NetworkTimeoutMonitor");
-		network_timeout_monitor.start();
+		network_timeout_runnable = new NetworkTimeoutMonitor(this, handler);
+		network_timeout_thread = new Thread(network_timeout_runnable, "NetworkTimeoutMonitor");
+		network_timeout_thread.start();
 		
 		// Register the listener with the Location Manager to receive location updates
 		location_manager.removeUpdates(this);
 		location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener)this);
 		
 		// show loading dialog
-		loading_dialog = ProgressDialog.show(this, "", "Acquiring Network Location...", true);
+		loading_dialog = new CleanableProgressDialog(this, this, "", "Acquiring Network Location...", true);
+		loading_dialog.show();
 	}
 	
 	/**
@@ -386,5 +457,21 @@ public class NearbyPlaces extends ListActivity implements LocationListener, OnIt
 		
 		// load location details activity
 		startActivity(new Intent(this, LocationDetails.class));
+	}
+
+	/**
+	 * onDialogInterruptedByBackButton
+	 */
+	public void onDialogInterruptedByBackButton() 
+	{
+		cleanUp();
+	}
+
+	/**
+	 * onDialogInterruptedBySearchButton
+	 */
+	public void onDialogInterruptedBySearchButton() 
+	{
+		cleanUp();
 	}
 }

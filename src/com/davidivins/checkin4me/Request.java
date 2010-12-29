@@ -13,7 +13,7 @@ abstract public class Request
 {
 	protected static final String TAG      = "Request";
 	protected static final String ENCODING = "ISO-8859-1";
-	
+
 	protected String method;
 	protected String host;
 	protected String endpoint;
@@ -119,7 +119,7 @@ abstract public class Request
 	 */
 	public void addQueryParameter(String key, String value)
 	{
-		query_parameters.put(key, value);
+		query_parameters.put(key, value.replace(" ", "%20"));
 	}
 	
 	/**
