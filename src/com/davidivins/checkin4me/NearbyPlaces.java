@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -289,15 +291,23 @@ public class NearbyPlaces extends ListActivity
 		if (null == location_manager)
 			location_manager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
-		// start timeout thread for gps coordinates
-		gps_timeout_runnable = new GPSTimeoutMonitor(this, handler);
-		gps_timeout_thread = new Thread(gps_timeout_runnable, "GPSTimeoutMonitor");
-		gps_timeout_thread.start();
+		// check that gps location is available
+		if (location_manager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+		{
+			// start timeout thread for gps coordinates
+			gps_timeout_runnable = new GPSTimeoutMonitor(this, handler);
+			gps_timeout_thread = new Thread(gps_timeout_runnable, "GPSTimeoutMonitor");
+			gps_timeout_thread.start();
 				
-		// Register the listener with the Location Manager to receive location updates
-		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
-		loading_dialog = new CleanableProgressDialog(this, this, "", "Acquiring GPS Location...", true);
-		loading_dialog.show();
+			// Register the listener with the Location Manager to receive location updates
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener)this);
+			loading_dialog = new CleanableProgressDialog(this, this, "", "Acquiring GPS Location...", true);
+			loading_dialog.show();
+		}
+		else
+		{
+			GPSTimeout();
+		}
 	}
 
 	
@@ -319,18 +329,33 @@ public class NearbyPlaces extends ListActivity
 		if (null == location_manager)
 			location_manager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 		
-		// start network location timeout
-		network_timeout_runnable = new NetworkTimeoutMonitor(this, handler);
-		network_timeout_thread = new Thread(network_timeout_runnable, "NetworkTimeoutMonitor");
-		network_timeout_thread.start();
+		// get network info
+		NetworkInfo mobile_network_info = 
+			((ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		NetworkInfo wifi_network_info = 
+			((ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE)).getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 		
-		// Register the listener with the Location Manager to receive location updates
-		location_manager.removeUpdates(this);
-		location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener)this);
+		// check that network location is available
+		if (location_manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && 
+				(mobile_network_info.isConnectedOrConnecting() || wifi_network_info.isConnectedOrConnecting()))
+		{
+			// start network location timeout
+			network_timeout_runnable = new NetworkTimeoutMonitor(this, handler);
+			network_timeout_thread = new Thread(network_timeout_runnable, "NetworkTimeoutMonitor");
+			network_timeout_thread.start();
 		
-		// show loading dialog
-		loading_dialog = new CleanableProgressDialog(this, this, "", "Acquiring Network Location...", true);
-		loading_dialog.show();
+			// Register the listener with the Location Manager to receive location updates
+			location_manager.removeUpdates(this);
+			location_manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener)this);
+		
+			// show loading dialog
+			loading_dialog = new CleanableProgressDialog(this, this, "", "Acquiring Network Location...", true);
+			loading_dialog.show();
+		}
+		else
+		{
+			NetworkTimeout();
+		}
 	}
 	
 	/**
@@ -341,14 +366,14 @@ public class NearbyPlaces extends ListActivity
 		Log.i(TAG, "NetworkTimeout");
 		
 		// cancel acquiring location dialog
-		if (loading_dialog.isShowing())
+		if (loading_dialog != null && loading_dialog.isShowing())
 			loading_dialog.cancel();
 		
 		// remove location updates
 		location_manager.removeUpdates(this);
 		
 		// show error
-		Toast.makeText(this, "Location Services Unavailable.", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "GPS and Network Connection Unavailable.", Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
