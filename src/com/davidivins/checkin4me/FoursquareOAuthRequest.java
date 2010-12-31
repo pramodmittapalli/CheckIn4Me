@@ -3,21 +3,18 @@ package com.davidivins.checkin4me;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
-import java.util.Random;
-import java.util.Set;
 
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import javax.net.ssl.SSLException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.AbstractVerifier;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.util.Base64;
 import android.util.Log;
 
 /**
@@ -28,10 +25,7 @@ import android.util.Log;
 public class FoursquareOAuthRequest extends Request 
 {
 	private static final String TAG               = "FoursquareOAuthRequest";
-	private static final String HASHING_ALGO      = "HmacSHA1";
 	private static final String RESPONSE_ENCODING = "UTF-8";
-	
-	private String signing_key;
 	
 	/**
 	 * FoursquareOAuthRequest
@@ -40,32 +34,9 @@ public class FoursquareOAuthRequest extends Request
 	 * @param host
 	 * @param endpoint
 	 */
-	public FoursquareOAuthRequest(String signing_key, String method, String host, String endpoint)
+	public FoursquareOAuthRequest(String method, String host, String endpoint)
 	{
 		super(method, host, endpoint);
-		this.signing_key = signing_key;
-		Log.i(TAG, "signing_key = " + signing_key);
-	}
-	
-	/**
-	 * getNonce
-	 * 
-	 * @return String
-	 */
-	public String generateNonce()
-	{
-		Random random = new Random();
-		return Long.toString(Math.abs(random.nextLong()), 60000);
-	}
-	
-	/**
-	 * getTimestamp
-	 * 
-	 * @return String
-	 */
-	public String generateTimestamp()
-	{
-		return Integer.toString((int)(System.currentTimeMillis() / 1000L));
 	}
 
 	/**
@@ -82,54 +53,36 @@ public class FoursquareOAuthRequest extends Request
 		Log.i(TAG, "executing Foursquare OAuth request...");
 		
 		// make request
-		String base_string = generateBaseString();
-		String signature   = calculateSignature(signing_key, base_string);
-		String url_string  = generateURL(signature);
-		
-		Log.i(TAG, "base string generated = " + base_string);
-		Log.i(TAG, "signature calculated  = " + signature);
-		Log.i(TAG, "request url generated = " + url_string);
+		String url_string  = generateURL();
+		Log.i(TAG, "request url = " + url_string);
 		
 		// make http request
 		try
 		{
 			// make background http request for temporary token
-			HttpClient   httpclient    = new DefaultHttpClient();
+			HttpClient httpclient = getTolerantClient();//new DefaultHttpClient();
 			HttpResponse http_response;
 			
 			if (method.equals("GET"))
 			{
 				HttpGet httpget = new HttpGet(url_string);
-				
-				Set<String> keys = headers.keySet();
-				for (String key : keys)
-				{
-					httpget.addHeader(key, headers.get(key));
-				}
-				
 				http_response = httpclient.execute(httpget);
 			}
 			else
 			{
 				HttpPost httppost = new HttpPost(url_string);
-				
-				Set<String> keys = headers.keySet();
-				for (String key : keys)
-				{
-					httppost.addHeader(key, headers.get(key));
-				}
-				
 				http_response = httpclient.execute(httppost);
 			}
-	    	
+
 	    	// get content of request
 	    	page = new BufferedReader(new InputStreamReader(
 	    			http_response.getEntity().getContent(), RESPONSE_ENCODING));
-	    		    	
+	    	
 	    	// read response into a string
 	    	String line;
 	    	while ((line = page.readLine()) != null)
 	    	{
+	    		Log.i(TAG, "line = " + line);
 	    		response.appendResponseString(line);
 	    	}
 
@@ -147,70 +100,98 @@ public class FoursquareOAuthRequest extends Request
 	}
 	
 	/**
-	 * generateBaseString
-	 * 
-	 * @return Base string generated for request
-	 */
-	private String generateBaseString()
-	{
-		String base_string = "";
-		
-		try
-		{
-			base_string = URLEncoder.encode(method, ENCODING) + "&" + 
-				URLEncoder.encode(host, ENCODING)             + 
-				URLEncoder.encode(endpoint, ENCODING)         + "&" + 
-				URLEncoder.encode(getURIQueryParametersAsString(), ENCODING);
-		}
-		catch (Exception e)
-		{
-			Log.wtf(TAG, ENCODING + " doesn't exist!?");
-		}
-		
-		return base_string;
-	}
-	
-	/**
-	 * calculateSignature
-	 * 
-	 * @param secret_key
-	 * @param base_string
-	 * @return Signature calculated for base string
-	 */
-	private String calculateSignature(String secret_key, String base_string)
-	{
-		String out_str = "";
-
-		try
-		{
-			SecretKey key = new SecretKeySpec(secret_key.getBytes(), HASHING_ALGO);
-
-			Mac m = Mac.getInstance(HASHING_ALGO);
-			m.init(key);
-
-			byte[] mac = m.doFinal(base_string.getBytes());
-
-			out_str = Base64.encodeToString(mac, Base64.NO_WRAP);
-			out_str = URLEncoder.encode(out_str, ENCODING);
-		}
-		catch(Exception e)
-		{
-			Log.e(TAG, e.getMessage());
-		}
-		
-		Log.i(TAG, "signature calculated = " + out_str);
-		return out_str;
-	}
-	
-	/**
 	 * generateURL
 	 * 
-	 * @param signature
 	 * @return URL for the request
 	 */
-	private String generateURL(String signature)
+	private String generateURL()
 	{
-		return host + endpoint + "?" + getURIQueryParametersAsString() + "&" +
-			"oauth_signature=" + signature;
+		return host + endpoint + "?" + getURIQueryParametersAsString();
+	}
+	
+	/**
+	 * getTolerantClient
+	 * 
+	 * Stolen from stackoverflow.com
+	 * http://stackoverflow.com/questions/3135679/android-httpclient-hostname-in-certificate-didnt-match-example-com-exa
+	 * 
+	 * @return DefaultttpClient
+	 */
+	public DefaultHttpClient getTolerantClient() 
+	{
+		DefaultHttpClient client = new DefaultHttpClient();
+		
+		SSLSocketFactory sslSocketFactory = (SSLSocketFactory)client
+			.getConnectionManager().getSchemeRegistry().getScheme("https")
+			.getSocketFactory();
+		
+		final X509HostnameVerifier delegate = sslSocketFactory.getHostnameVerifier();
+		
+		if(!(delegate instanceof TolerantVerifier)) 
+			sslSocketFactory.setHostnameVerifier(new TolerantVerifier(delegate));
+		
+		return client;
+	}
+	
+	/**
+	 * TolerantVerifier
+	 * 
+	 * Stolen from stackoverflow.com
+	 * http://stackoverflow.com/questions/3135679/android-httpclient-hostname-in-certificate-didnt-match-example-com-exa
+	 * 
+	 * @author noah@stackoverflow
+	 */
+	class TolerantVerifier extends AbstractVerifier 
+	{
+		private final X509HostnameVerifier delegate;
+
+		/**
+		 * TolerantVerfier
+		 * 
+		 * @param delegate
+		 */
+		public TolerantVerifier(final X509HostnameVerifier delegate) 
+		{
+			this.delegate = delegate;
+		}
+
+		/**
+		 * verify
+		 * 
+		 * @param host
+		 * @param cns
+		 * @param subjectAlts
+		 */
+		public final void verify(String host, String[] cns, String[] subjectAlts) //throws SSLException 
+		{
+			boolean ok = false;
+			
+			try 
+			{
+				delegate.verify(host, cns, subjectAlts);
+			} 
+			catch (SSLException e) 
+			{
+				for (String cn : cns) 
+				{
+					if (cn.startsWith("*.")) 
+					{
+						try 
+						{
+							delegate.verify(host, new String[] { cn.substring(2) }, subjectAlts);
+							ok = true;
+						} 
+						catch (Exception e1) 
+						{
+							Log.e(TAG, "We are here and I'm not sure why...");
+						}
+					}
+				}
+				
+				if(!ok) 
+					Log.i(TAG, "Failed verification"); //throw e;
+			}
+		}
 	}
 }
+
