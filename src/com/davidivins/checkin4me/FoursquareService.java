@@ -114,9 +114,7 @@ public class FoursquareService implements Service
 	 */
 	public boolean connected(SharedPreferences settings)
 	{
-		return settings.contains("foursquare_oauth_token") && 
-			(settings.getString("foursquare_oauth_token", null) != null) &&
-			settings.contains("foursquare_oauth_token_secret") &&
-			(settings.getString("foursquare_oauth_token_secret", null) != null);
+		return settings.contains("foursquare_access_token") && 
+			(settings.getString("foursquare_access_token", null) != null);
 	}
 }

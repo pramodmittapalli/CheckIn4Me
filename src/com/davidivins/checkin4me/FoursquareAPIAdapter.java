@@ -108,10 +108,10 @@ public class FoursquareAPIAdapter implements APIAdapter
 		 */
 		LocationThread(String query, String longitude, String latitude, SharedPreferences settings)
 		{
-			this.query = query;
+			this.query     = query;
 			this.longitude = longitude;
-			this.latitude = latitude;
-			this.settings = settings;
+			this.latitude  = latitude;
+			this.settings  = settings;
 		}
 
 		/**
@@ -123,26 +123,18 @@ public class FoursquareAPIAdapter implements APIAdapter
 
 			// build new oauth request
 			FoursquareOAuthRequest request = new FoursquareOAuthRequest(
-					config.getProperty("oauth_consumer_secret", "-1") + "&" + settings.getString("foursquare_oauth_token_secret", "-1"),
 					config.getProperty("api_http_method"), config.getProperty("api_host"), 
-					config.getProperty("api_version") + config.getProperty("api_locations_endpoint") + 
-					"." + config.getProperty("api_data_format"));
+					config.getProperty("api_version") + config.getProperty("api_locations_endpoint"));
 			
 			// set request headers
-			request.addHeader("User-Agent", "CheckIn4Me:1.0");
+			request.addHeader("User-Agent", "CheckIn4Me:2.0");  // TODO: set this from meta-data
 			
 			// set query parameters
 			if (query != null)
-				request.addQueryParameter("q", query);
-			request.addQueryParameter("oauth_consumer_key", config.getProperty("oauth_consumer_key"));
-			request.addQueryParameter("oauth_nonce", request.generateNonce());
-			request.addQueryParameter("oauth_signature_method", config.getProperty("oauth_signature_method"));
-			request.addQueryParameter("oauth_token", settings.getString("foursquare_oauth_token", "-1"));
-			request.addQueryParameter("oauth_timestamp", request.generateTimestamp());
-			request.addQueryParameter("oauth_version", config.getProperty("oauth_version"));
-			request.addQueryParameter("geolat", latitude);
-			request.addQueryParameter("geolong", longitude);
+				request.addQueryParameter("query", query);
+			request.addQueryParameter("ll", latitude + "," + longitude);
 			request.addQueryParameter("l", "50");
+			request.addQueryParameter("oauth_token", settings.getString("foursquare_access_token", "FOURSQUARE_ACCESS_TOKEN_HERE"));
 			
 			// execute http request
 			OAuthResponse response = (OAuthResponse)request.execute();
@@ -159,45 +151,67 @@ public class FoursquareAPIAdapter implements APIAdapter
 		 */
 		private void setLocationsFromJson(String json_string, String query)
 		{
-			latest_locations.clear();
-			String type = "Nearby";
+			Log.i(TAG, "json_string = " + json_string);
+			if (null != query) Log.i(TAG, "query = " + query);
 			
+			latest_locations.clear();
+			String type = "nearby";
+			
+			// if a query exists, look for the "places" group instead of "nearby"
 			if (query != null)
-				type = "Matching Places";
+				type = "places";
 				
 			try 
 			{
-				JSONObject json = new JSONObject(json_string);
-				JSONArray groups = json.getJSONArray("groups");
+				// get the json response string as a json object
+				JSONObject full_response = new JSONObject(json_string);
+				JSONObject response = full_response.getJSONObject("response");
+				JSONArray groups = response.getJSONArray("groups");
 				
+				// loop through groups and find the group that is either the query results or the nearby places
 				for (int i = 0; i < groups.length(); i++)
 				{
-					JSONObject group = groups.getJSONObject(i);
+					JSONObject current_object = groups.getJSONObject(i);
 					
-					if (group.getString("type").equals(type))
+					// check the type of the current group
+					if (current_object.getString("type").equals(type))
 					{
-						JSONArray venues = group.getJSONArray("venues");
+						// get this group's venues
+						JSONArray venues = current_object.getJSONArray("items");
 						
+						// store each venue as a new locale
 						for (int j = 0; j < venues.length(); j++)
 						{
+							// get venue information
 							JSONObject venue = venues.getJSONObject(j);
 							
-							String venue_id = venue.getString("id");
-							String name = venue.getString("name");
+							String venue_id    = venue.getString("id");
+							String name        = venue.getString("name");
 							String description = "";
-							String longitude = venue.getString("geolong");
-							String latitude = venue.getString("geolat");
-							String address = venue.getString("address");
-							String city = venue.getString("city");
-							String state = venue.getString("state");
-							String zip = "";
 							
+							// get venue location information
+							JSONObject venue_location = venue.getJSONObject("location");
+							
+							String latitude  = venue_location.getString("lat");
+							String longitude = venue_location.getString("lng");
+							
+							String address   = (venue_location.has("address")) ? venue_location.getString("address") : "";
+							//String cross_street   = (venue_location.has("crossStreet")) ? venue_location.getString("crossStreet") : "";
+							String city      = (venue_location.has("city")) ? venue_location.getString("city") : "";
+							String state     = (venue_location.has("state")) ? venue_location.getString("state") : "";
+							String zip       = (venue_location.has("postalCode")) ? venue_location.getString("postalCode") : "";
+							//String distance   = (venue_location.has("distance")) ? venue_location.getString("distance") : "";
+							//String country   = (venue_location.has("country")) ? venue_location.getString("country") : "";
+
+							// create a new locale object with the venue's data
 							Locale location = new Locale(name, description, longitude, latitude,
 									address, city, state, zip);
 							location.mapServiceIdToLocationId(service_id, venue_id);
+							
+							// add the new locale to the latest locations list
 							latest_locations.add(location);	
 						}
-						
+
 						break;
 					}
 				}
@@ -241,29 +255,22 @@ public class FoursquareAPIAdapter implements APIAdapter
 
 			// build new oauth request
 			FoursquareOAuthRequest request = new FoursquareOAuthRequest(
-					config.getProperty("oauth_consumer_secret", "-1") + "&" + settings.getString("foursquare_oauth_token_secret", "-1"),
 					config.getProperty("api_checkin_http_method"), config.getProperty("api_host"), 
-					config.getProperty("api_version") + config.getProperty("api_checkin_endpoint") + 
-					"." + config.getProperty("api_data_format"));
+					config.getProperty("api_version") + config.getProperty("api_checkin_endpoint"));
 			
 			// set request headers
-			request.addHeader("User-Agent", "CheckIn4Me:1.0");
+			request.addHeader("User-Agent", "CheckIn4Me:2.0"); // TODO: get this from meta-data 
 			
 			// set query parameters
-			request.addQueryParameter("oauth_consumer_key", config.getProperty("oauth_consumer_key"));
-			request.addQueryParameter("oauth_nonce", request.generateNonce());
-			request.addQueryParameter("oauth_signature_method", config.getProperty("oauth_signature_method"));
-			request.addQueryParameter("oauth_token", settings.getString("foursquare_oauth_token", "-1"));
-			request.addQueryParameter("oauth_timestamp", request.generateTimestamp());
-			request.addQueryParameter("oauth_version", config.getProperty("oauth_version"));
+			request.addQueryParameter("oauth_token", settings.getString("foursquare_access_token", "-1"));
 			
 			HashMap<Integer, String> service_id_location_id_xref = location.getServiceIdToLocationIdMap();
 			String vid = service_id_location_id_xref.get(service_id);
 			
-			request.addQueryParameter("vid", vid);
-			request.addQueryParameter("private", "0");
-			request.addQueryParameter("geolat", settings.getString("current_latitude", "-1"));
-			request.addQueryParameter("geolong", settings.getString("current_longitude", "-1"));
+			request.addQueryParameter("venueId", vid);
+			request.addQueryParameter("ll", settings.getString("current_latitude", "CURRENT_LATITUDE_HERE") + "," +
+					 settings.getString("current_longitude", "CURRENT_LONGITUDE_HERE"));
+			request.addQueryParameter("broadcast", "public");
 			
 			// execute http request
 			OAuthResponse response = (OAuthResponse)request.execute();
@@ -280,18 +287,19 @@ public class FoursquareAPIAdapter implements APIAdapter
 		 */
 		private void setLocationsFromJson(String json_string)
 		{
+			Log.i(TAG, "json_string = " + json_string);
+			
 			latest_checkin_status = false;
 			
 			try 
 			{
-				JSONObject json = new JSONObject(json_string);
-				JSONObject checkin = json.getJSONObject("checkin");
+				// get the json response string as a json object
+				JSONObject full_response = new JSONObject(json_string);
+				JSONObject response = full_response.getJSONObject("response");
+				JSONObject checkin_info = response.getJSONObject("checkin");
 				
-				@SuppressWarnings("unused")
-				String created = checkin.getString("created");
-				
-				// if we find a created at check-in time/date without throwing an exception, check-in was successful
-				latest_checkin_status = true;
+				// get checkin status from fields returned in json response
+				latest_checkin_status = checkin_info.has("id") && checkin_info.has("createdAt");
 			} 
 			catch (JSONException e) 
 			{

@@ -55,7 +55,7 @@ public class GowallaOAuthRequest extends Request
 		try
 		{
 			// make background http request for temporary token
-			HttpClient   httpclient    = new DefaultHttpClient();
+			HttpClient httpclient = new DefaultHttpClient();
 			HttpResponse http_response;
 			
 			if (method.equals("GET"))
