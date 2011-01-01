@@ -134,7 +134,7 @@ public class FoursquareAPIAdapter implements APIAdapter
 				request.addQueryParameter("query", query);
 			request.addQueryParameter("ll", latitude + "," + longitude);
 			request.addQueryParameter("l", "50");
-			request.addQueryParameter("oauth_token", settings.getString("foursquare_access_token", "FOURSQUARE_ACCESS_TOKEN_HERE"));
+			request.addQueryParameter("oauth_token", settings.getString("foursquare_oauth_token_secret", "FOURSQUARE_ACCESS_TOKEN_HERE"));
 			
 			// execute http request
 			OAuthResponse response = (OAuthResponse)request.execute();
@@ -262,7 +262,8 @@ public class FoursquareAPIAdapter implements APIAdapter
 			request.addHeader("User-Agent", "CheckIn4Me:2.0"); // TODO: get this from meta-data 
 			
 			// set query parameters
-			request.addQueryParameter("oauth_token", settings.getString("foursquare_access_token", "-1"));
+			request.addQueryParameter("oauth_token", 
+					settings.getString("foursquare_oauth_token_secret", "FOURSQUARE_ACCESS_TOKEN_HERE"));
 			
 			HashMap<Integer, String> service_id_location_id_xref = location.getServiceIdToLocationIdMap();
 			String vid = service_id_location_id_xref.get(service_id);

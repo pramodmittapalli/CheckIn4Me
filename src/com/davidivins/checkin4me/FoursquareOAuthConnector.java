@@ -187,7 +187,7 @@ public class FoursquareOAuthConnector implements OAuthConnector
 		{
 			JSONObject json = new JSONObject(response.getResponseString());
 			Log.i(TAG, "access_token = " + json.getString("access_token"));
-			settings_editor.putString("foursquare_access_token", json.getString("access_token"));
+			settings_editor.putString("foursquare_oauth_token_secret", json.getString("access_token"));
 			settings_editor.commit();
 		}
 		catch (Exception e)
