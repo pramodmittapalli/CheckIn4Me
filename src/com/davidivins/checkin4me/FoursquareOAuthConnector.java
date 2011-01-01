@@ -75,7 +75,7 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	public String generateAuthorizationURL(SharedPreferences settings) 
 	{
 		String url = config.getProperty("oauth_host", "OAUTH_HOST_HERE") 
-			+ config.getProperty("oauth_authenticate_endpoint", "OAUTH_AUTHENTICATE_ENDPOINT_HERE")
+			+ config.getProperty("oauth_authorize_endpoint", "OAUTH_AUTHENTICATE_ENDPOINT_HERE")
 			+ "?client_id=" + config.getProperty("oauth_client_id", "OAUTH_CLIENT_ID_HERE")
 			+ "&response_type=" + config.getProperty("oauth_response_type", "OAUTH_RESPONSE_TYPE_HERE")
 			+ "&redirect_uri=" + oauth_redirect_uri
@@ -127,7 +127,7 @@ public class FoursquareOAuthConnector implements OAuthConnector
 		OAuthResponse response = new OAuthResponse();
 		Log.i(TAG, "code in settings = " + settings.getString("foursquare_code", "-1"));
 		
-		if (settings.getString("foursquare_code", "-1") != "-1")
+		if (settings.getString("foursquare_code", null) != null)
 		{
 			FoursquareOAuthRequest request = new FoursquareOAuthRequest(
 					config.getProperty("oauth_http_method", "OAUTH_HTTP_METHOD_HERE"), 
@@ -204,7 +204,9 @@ public class FoursquareOAuthConnector implements OAuthConnector
 	public void clearTemporaryData(Editor settings_editor)
 	{
 		// clear initial values
-		settings_editor.putString("foursquare_code", null);
+		settings_editor.remove("foursquare_code");
+		settings_editor.remove("foursquare_access_token"); // wipe out old fuck-up from anyone who had to deal with it
+		settings_editor.remove("foursquare_oauth_token"); // clear old unused oauth 1.0 token from systems
 		settings_editor.commit();
 	}
 }
