@@ -5,8 +5,11 @@ import com.davidivins.checkin4me.*;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 
 /**
  * CheckIn4Me **FREE**
@@ -36,6 +39,18 @@ public class CheckIn4Me extends Activity
         tracker.trackPageView("/checkin4me_free");
         tracker.dispatch();
         tracker.stop();
+		
+        // clear settings for this version
+//        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+//        String clear_settings_tag = "VERSION_1.6_HAS_CLEARED_SETTINGS";
+//        
+//        if (settings.getBoolean(clear_settings_tag, false) == false)
+//        {
+//        	Editor settings_editor = settings.edit();
+//        	settings_editor.clear();
+//        	settings_editor.putBoolean(clear_settings_tag, true);
+//        	settings_editor.commit();
+//        }
 		
 		runProgram();
 	}
